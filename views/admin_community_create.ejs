@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquamarine Admin Panel</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <script src="/js/pjax.js"></script>
+    <script src="/js/admin.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <%- include("partials/navbar.ejs") %>
+        <div class="header">
+            Creating New Community
+        </div>
+    </div>
+
+    <div class="wrapper center">
+        <div style="width: 50%;">
+            <form>
+                <div class="form-row">
+                  <div class="col">
+                    <input id="name" type="text" class="form-control" placeholder="Community Name..">
+                  </div>
+                  <div class="col">
+                    <textarea id="desc" type="text" class="form-control" placeholder="Description.."></textarea>
+                  </div>
+                  <div class="col">
+                    <input id="app_data" type="text" class="form-control" placeholder="App Data..">
+                  </div>
+                  <div class="col">
+                    <input id="parent_community_id" type="text" class="form-control" placeholder="Parent Community ID..">
+                  </div>
+                  <div class="col">
+                    <input id="pid" type="text" class="form-control" placeholder="PID..">
+                  </div>
+                  <div class="col">
+                    <input id="title_ids" type="text" class="form-control" placeholder="Title ID's.. [TID, TID, TID]">
+                  </div>
+                  <div class="col">
+                    <input id="ingame_only" type="text" class="form-control" placeholder="In-Game Posts Only (0, 1)">
+                  </div>
+                  <div class="col select">
+                    <select name="platform" id="platform" autocomplete="off">
+                        <option value="wiiu">Wii U</option>
+                        <option value="3ds">Nintendo 3DS</option>
+                        <option value="both">Both</option>
+                        <option value="vc">Virtual Console</option>
+                        <option value="topic">Topic</option>
+                        <option value="wii">Wii</option>
+                    </select>
+                    <select name="type" id="type" autocomplete="off">
+                        <option value="main">Main Community</option>
+                        <option value="sub">Subcommunity</option>
+                        <option value="normal">Normal Community</option>
+                        <option value="announcement">Announcement Community</option>
+                    </select>
+                    <select name="post_type" id="post_type" autocomplete="off">
+                        <option value="text">Text Only</option>
+                        <option value="memo">Memo Only</option>
+                        <option value="all">All</option>
+                    </select>
+                  </div>
+
+                  <div class="select">
+                    <div style="margin-bottom: 15px;">
+                      <label for="icon" style="text-align: center; width: 100%;">Community Icon 128x128/72x72</label>
+                      <input id="icon" type="file" class="custom-file-input" autocomplete="off">
+                    </div>
+  
+                    <div style="margin-bottom: 30px;">
+                      <label for="banner" style="text-align: center; width: 100%;">Community Banner (CTR) 400x168</label>
+                      <input id="banner-ctr" type="file" class="custom-file-input" autocomplete="off">
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                      <label for="banner" style="text-align: center; width: 100%;">Community Banner (WUP) 1280x180</label>
+                      <input id="banner-wup" type="file" class="custom-file-input" autocomplete="off">
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              <div class="center">
+                <button type="button" class="btn btn-secondary" style="margin-right: 20px;" onclick="history.back()">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="submitNewCommunity()">Create</button>
+              </div>
+        </div>
+    </div>
+</body>
+
+</html>

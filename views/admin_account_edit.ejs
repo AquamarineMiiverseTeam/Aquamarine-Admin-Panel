@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquamarine Admin Panel</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <script src="/js/pjax.js"></script>
+    <script src="/js/admin.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <%- include("partials/navbar.ejs") %>
+        <div class="header">
+            Editing <%= editAccount.nnid %> (ID: <%= editAccount.id %>) <img src="https://mii-images.account.nintendo.net/<%= editAccount.mii_hash %>_normal_face.png" width="50px" style="margin-left: 10px;">
+        </div>
+    </div>
+
+    <div class="wrapper center">
+        <div style="width: 50%;">
+            <form>
+                <div class="form-row">
+                    <div class="col">
+                        <input id="pid" type="text" class="form-control" placeholder="Account PID.." value="<%= editAccount.pid %>">
+                    </div>
+                    <div class="col">
+                        <input id="nnid" type="text" class="form-control" placeholder="Account NNID.." value="<%= editAccount.nnid %>">
+                    </div>
+                    <div class="col">
+                        <input id="mii" type="text" class="form-control" placeholder="Mii Data.." value="<%= editAccount.mii %>">
+                    </div>
+                    <div class="col">
+                        <input id="mii_name" type="text" class="form-control" placeholder="Mii Name.." value="<%= editAccount.mii_name %>">
+                    </div>
+                    <div class="col">
+                        <input id="mii_hash" type="text" class="form-control" placeholder="Mii Hash.." value="<%= editAccount.mii_hash %>">
+                    </div>
+                    <div class="col">
+                        <textarea id="bio" type="text" class="form-control" placeholder="Bio.."><%= editAccount.bio %></textarea>
+                    </div>
+                    <div class="col">
+                        <input id="admin" type="text" class="form-control" placeholder="Admin (0, 1)" value="<%= editAccount.admin %>">
+                    </div>
+                    <div class="col">
+                        <input id="banned" type="text" class="form-control" placeholder="Banned (0, 1)" value="<%= editAccount.banned %>">
+                    </div>
+                    <div class="col">
+                        <input id="3ds_service_token" type="text" class="form-control" placeholder="3DS Service Token (First 42 Chars)" value="<%= editAccount['3ds_service_token'] %>">
+                    </div>
+                    <div class="col">
+                        <input id="wiiu_service_token" type="text" class="form-control" placeholder="Wii U Service Token (First 42 Chars)" value="<%= editAccount.wiiu_service_token %>">
+                    </div>
+                    <div class="col">
+                        <input id="game_experience" type="text" class="form-control" placeholder="Game Experience (0, 1, 2)" value="<%= editAccount.game_experience %>">
+                    </div>
+                    <div class="col">
+                        <input id="language" type="text" class="form-control" placeholder="Language Code (2 Character Lowercase)" value="<%= editAccount.language %>">
+                    </div>
+                    <div class="col">
+                        <input id="country" type="text" class="form-control" placeholder="Country Code (2 Character Uppercase)" value="<%= editAccount.country %>">
+                    </div>
+                </div>
+            </form>
+
+            <div class="center">
+                <button type="button" class="btn btn-secondary" style="margin-right: 20px;" onclick="history.back()">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="submitEditedAccount()">Commit Edits</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

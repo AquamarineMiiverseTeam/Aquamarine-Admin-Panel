@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquamarine Admin Panel</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <script src="/js/pjax.js"></script>
+    <script src="/js/admin.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="wrapper">
+            <%- include("partials/navbar.ejs") %>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/communities/new')" style="margin: 5px;">Create New Community</button>
+    
+        <table class="table table-striped table-bordered" style="padding: 20px;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Icon</th>
+                    <th>ID</th>
+                    <th>Platform</th>
+                    <th>Type</th>
+                    <th>Post Type</th>
+                    <th>In-Game Only</th>
+                    <th>Community Name</th>
+                    <th>Description</th>
+                    <th>Posts</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i=0; i < communities.length; i++) { const community=communities[i];%>
+    
+                    <tr>
+                        <td><img src="/img/icons/<%= community.id %>.jpg" width="75px"></td>
+                        <td scope="row">
+                            <%= community.id %>
+                        </td>
+                        <td>
+                            <%= community.platform %>
+                        </td>
+                        <td>
+                            <%= community.type %>
+                        </td>
+                        <td>
+                            <%= community.post_type %>
+                        </td>
+                        <td>
+                            <%= community.ingame_only %>
+                        </td>
+                        <td>
+                            <%= community.name %>
+                        </td>
+                        <td>
+                            <%= community.description %>
+                        </td>
+                        <td><button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/communities/<%= community.id %>/posts')">See Posts</button></td>
+                        <td><a type="button" class="btn btn-secondary" onclick="pjax.loadUrl('/communities/<%= community.id %>')">Edit</a></td>
+                        <td>
+                            <button communityid_delete=<%= community.id %> type="button" class="btn btn-danger" onclick="confirmDeletionCommunity(this.attributes[0].value)">Delete</button>
+                            <button communityid_confirm=<%= community.id %> type="button" class="btn btn-danger" style="display: none;" onclick="deleteCommunity(this.attributes[0].value)">Confirm</button>
+                        </td>
+                    </tr>
+                    <%} %>
+            </tbody>
+        </table>
+        
+    </div>
+    
+</body>
+
+</html>

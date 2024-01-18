@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquamarine Admin Panel</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <script src="/js/pjax.js"></script>
+    <script src="/js/admin.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <%- include("partials/navbar.ejs") %>
+
+        <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/accounts/new')" style="margin: 5px;">Create New Account</button>
+    
+        <table id="admin_table" class="table table-striped table-bordered" style="padding: 20px;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Time Created</th>
+                    <th>ID</th>
+                    <th>PID</th>
+                    <th>NNID</th>
+                    <th>Mii Name</th>
+                    <th>Mii</th>
+                    <th>Admin</th>
+                    <th>Language</th>
+                    <th>Country</th>
+                    <th>Bio</th>
+                    <th>Game Experience</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i=0; i < accounts.length; i++) { const account=accounts[i];%>
+                    <tr>
+                        <td><%= account.create_time %></td>
+                        <td><%= account.id %></td>
+                        <td><%= account.pid %></td>
+                        <td><%= account.nnid %></td>
+                        <td><%= account.mii_name %></td>
+                        <td><img width="48px" alt="<%= account.mii_hash %>" title="<%= account.mii_hash %>" src="https://mii-images.account.nintendo.net/<%= account.mii_hash %>_normal_face.png"></td>
+                        <td><%= account.admin %></td>
+                        <td><%= account.language %></td>
+                        <td><%= account.country %></td>
+                        <td><%= account.bio %></td>
+                        <td><%= account.game_experience %></td>
+                        <td><a type="button" class="btn btn-secondary" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</a></td>
+                        <td>
+                            <button accountid_delete=<%= account.id %> type="button" class="btn btn-danger" onclick="confirmDeletionAccount(this.attributes[0].value)">Delete</button>
+                            <button accountid_confirm=<%= account.id %> type="button" class="btn btn-danger" style="display: none;" onclick="deleteAccount(this.attributes[0].value)">Confirm</button>
+                        </td>
+                    </tr>
+                <%} %>
+            </tbody>
+        </table>
+        
+    </div>
+    
+</body>
+
+<script>
+    loadPostTimes();
+</script>
+
+</html>

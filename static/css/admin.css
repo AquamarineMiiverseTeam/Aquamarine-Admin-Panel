@@ -1,0 +1,33 @@
+.header {
+    padding: 15px;
+    width: 100%;
+
+    text-align: center;
+
+    border-bottom: 1px solid var(--bs-table-striped-color);
+}
+
+table img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+img {
+    border-radius: 5px;
+    border: 1px solid rgb(214, 214, 214);
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+.col {
+    margin-bottom: 10px;
+}
+
+.select {
+    display: flex;
+    justify-content:space-evenly;
+}
