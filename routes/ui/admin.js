@@ -153,7 +153,7 @@ router.get('/communities/:id', async(req, res) => {
 })
 
 router.get('/communities/:id/posts', async (req, res) => {
-    const posts = await database_query.getPosts(req.params.id, 'desc', null, "", req);
+    const posts = await database_query.getPosts(req.params.id, 'desc', null, "", 0, req);
     const community = await database_query.getCommunity(req.params.id, req);
 
     res.render('admin_community_posts', {
