@@ -48,6 +48,9 @@
                         <input id="admin" type="text" class="form-control" placeholder="Admin (0, 1)" value="<%= editAccount.admin %>">
                     </div>
                     <div class="col">
+                        <input id="tester" type="text" class="form-control" placeholder="Tester (0, 1)" value="<%= editAccount.tester %>">
+                    </div>
+                    <div class="col">
                         <input id="banned" type="text" class="form-control" placeholder="Banned (0, 1)" value="<%= editAccount.banned %>">
                     </div>
                     <div class="col">
@@ -64,6 +67,31 @@
                     </div>
                     <div class="col">
                         <input id="country" type="text" class="form-control" placeholder="Country Code (2 Character Uppercase)" value="<%= editAccount.country %>">
+                    </div>
+                    <div class="col">
+                        <input id="favorite_post" type="text" class="form-control" placeholder="Favorite Post" value="<%= editAccount.favorite_post %>">
+                    </div>
+                    <div class="col">
+                        <input id="relationship_visible" type="text" class="form-control" placeholder="Relationship Visible" value="<%= editAccount.relationship_visible %>">
+                    </div>
+                    <div class="col">
+                        <input id="allow_friend" type="text" class="form-control" placeholder="Allow Friend" value="<%= editAccount.allow_friend %>">
+                    </div>
+                    <div class="col">
+                        <input id="empathy_notification" type="text" class="form-control" placeholder="Empathy Notification" value="<%= editAccount.empathy_notification %>">
+                    </div>
+                    <div class="col">
+                        <input id="community_settings" type="text" class="form-control" placeholder="Community Settings" value="<%= editAccount.community_settings %>">
+                    </div>
+                    <div class="col select">
+                        <select name="pronouns" id="pronouns" autocomplete="off">
+                            <option value="he/him" <%= (editAccount.pronouns == "he/him") ? "selected" : "" %>>he/him</option>
+                            <option value="she/her" <%= (editAccount.pronouns == "she/her") ? "selected" : "" %>>she/her</option>
+                            <option value="he/she" <%= (editAccount.pronouns == "he/she") ? "selected" : "" %>>he/she</option>
+                            <option value="they/them" <%= (editAccount.pronouns == "they/them") ? "selected" : "" %>>they/them</option>
+                            <option value="he/they" <%= (editAccount.pronouns == "he/they") ? "selected" : "" %>>he/they</option>
+                            <option value="she/they" <%= (editAccount.pronouns == "she/they") ? "selected" : "" %>>she/they</option>
+                        </select>
                     </div>
                 </div>
             </form>

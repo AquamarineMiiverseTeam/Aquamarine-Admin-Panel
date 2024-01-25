@@ -30,10 +30,17 @@
                     <th>Mii Name</th>
                     <th>Mii</th>
                     <th>Admin</th>
-                    <th>Language</th>
-                    <th>Country</th>
                     <th>Bio</th>
                     <th>Game Experience</th>
+                    <th>Language</th>
+                    <th>Country</th>
+                    <th>Favorite Post</th>
+                    <th>Relationship Visible</th>
+                    <th>Allow Friend</th>
+                    <th>Empathy Notification</th>
+                    <th>Pronouns</th>
+                    <th>Community Settings</th>
+                    <th>Tester</th>
                     <th>Edit</th>
                     <th>Delete</th>
                 </tr>
@@ -48,10 +55,17 @@
                         <td><%= account.mii_name %></td>
                         <td><img width="48px" alt="<%= account.mii_hash %>" title="<%= account.mii_hash %>" src="https://mii-images.account.nintendo.net/<%= account.mii_hash %>_normal_face.png"></td>
                         <td><%= account.admin %></td>
-                        <td><%= account.language %></td>
-                        <td><%= account.country %></td>
                         <td><%= account.bio %></td>
                         <td><%= account.game_experience %></td>
+                        <td><%= account.language %></td>
+                        <td><%= account.country %></td>
+                        <td><%= account.favorite_post %></td>
+                        <td><%= account.relationship_visible %></td>
+                        <td><%= account.allow_friend %></td>
+                        <td><%= account.empathy_notification %></td>
+                        <td><%= account.pronouns %></td>
+                        <td><%= account.community_settings %></td>
+                        <td><%= account.tester %></td>
                         <td><a type="button" class="btn btn-secondary" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</a></td>
                         <td>
                             <button accountid_delete=<%= account.id %> type="button" class="btn btn-danger" onclick="confirmDeletionAccount(this.attributes[0].value)">Delete</button>

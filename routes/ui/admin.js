@@ -14,10 +14,20 @@ const query = util.promisify(con.query).bind(con)
 const fs = require('fs')
 const path = require('path')
 
-const moment = require('moment')
+const moment = require('moment');
+
+const common = require('../../../Aquamarine-Utils/common')
 
 router.use(body_parser.urlencoded({extended : false, limit : '150mb'}))
 router.use(body_parser.json({limit : '150mb'}))
+router.use(async (req, res, next) => {
+    // loop through object entries and make anything thats empty into null, to avoid making existing null values into blank but non-null values
+    for (var [key, value] of Object.entries(req.body)) {
+        if (!value) req.body[key] = null;
+    }
+
+    next();
+})
 
 router.get('/', async (req, res) => {
     res.render('admin.ejs', {
@@ -55,12 +65,50 @@ router.get('/accounts/:id', async(req, res) => {
 
 // account creation/editing/deletion endpoints
 router.post('/accounts/new', async (req, res) => {
+
+    req.body.pid = req.body.pid ? req.body.pid : 0;
+    req.body.nnid = req.body.nnid ? req.body.nnid : "DUMMY";
+    req.body.mii = req.body.mii ? req.body.mii : "AwAAQCLrfSYhRPJQ3RFDqcJXDK3s3QAAAVRtAGkAawBlAHkAAABFAAAAAAAAAERAMgCDASNoQxg3NEUUgRIZaA0AACkAUklQbQBpAGsAZQAAAAAAAAAAAAAAAAAAAAQL"; // from pid 1738262487
+    req.body.mii_name = req.body.mii_name ? req.body.mii_name : "DUMMY";
+    req.body.mii_hash = req.body.mii_hash ? req.body.mii_hash : "cso8ikxbciqw";
+    req.body.bio = req.body.bio ? req.body.bio : "User has not set a bio yet..";
+    req.body.admin = req.body.admin ? req.body.admin : 0;
+    req.body.banned = req.body.banned ? req.body.banned : 0;
+    req.body.threeds_service_token = req.body.threeds_service_token ? req.body.threeds_service_token : null;
+    req.body.wiiu_service_token = req.body.wiiu_service_token ? req.body.wiiu_service_token : null;
+    req.body.game_experience = req.body.game_experience ? req.body.game_experience : 1;
+    req.body.language = req.body.language ? req.body.language : 'en';
+    req.body.country = req.body.country ? req.body.country : 'US';
+    req.body.favorite_post = req.body.favorite_post ? req.body.favorite_post : null;
+    req.body.relationship_visible = req.body.relationship_visible ? req.body.relationship_visible : 0;
+    req.body.allow_friend = req.body.allow_friend ? req.body.allow_friend : 0;
+    req.body.empathy_notification = req.body.empathy_notification ? req.body.empathy_notification : 0;
+    req.body.pronouns = req.body.pronouns ? req.body.pronouns : "they/them";
+    req.body.community_settings = req.body.community_settings ? req.body.community_settings : "{}";
+    req.body.tester = req.body.tester ? req.body.tester : 0
+
     var id = await query(
-    `INSERT INTO accounts (pid, nnid, mii, mii_name, mii_hash, bio, admin, banned, 3ds_service_token, wiiu_service_token, game_experience, language, country) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [req.body.pid ? req.body.pid : 0, req.body.nnid ? req.body.nnid : "DUMMY", req.body.mii, req.body.mii_name ? req.body.mii_name : "DUMMY",
-    req.body.mii_hash ? req.body.mii_hash : "cso8ikxbciqw", req.body.bio ? req.body.bio : "User has not set a bio yet..", req.body.admin ? req.body.admin : 0,
-    req.body.banned ? req.body.banned : 0, req.body.threeds_service_token, req.body.wiiu_service_token, req.body.game_experience ? req.body.game_experience : 0,
-    req.body.language ? req.body.language : 'en', req.body.country ? req.body.country : 'US']);
+    `INSERT INTO accounts (pid, nnid, mii, mii_name, mii_hash, bio, admin, banned, 3ds_service_token, wiiu_service_token, game_experience, language, country, favorite_post, relationship_visible, allow_friend, empathy_notification, pronouns, community_settings, tester) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [req.body.pid,
+    req.body.nnid,
+    req.body.mii,
+    req.body.mii_name,
+    req.body.mii_hash,
+    req.body.bio,
+    req.body.admin,
+    req.body.banned,
+    req.body.threeds_service_token,
+    req.body.wiiu_service_token,
+    req.body.game_experience,
+    req.body.language,
+    req.body.country,
+    req.body.favorite_post,
+    req.body.relationship_visible,
+    req.body.allow_friend,
+    req.body.empathy_notification,
+    req.body.pronouns,
+    req.body.community_settings,
+    req.body.tester]);
 
     var editString = `${req.body.nnid} (ID: ${id.insertId})\n\n`;
 
@@ -77,6 +125,13 @@ router.post('/accounts/new', async (req, res) => {
     editString += `Game Experience: ${req.body.game_experience}\n`;
     editString += `Language Code: ${req.body.language}\n`;
     editString += `Country Code: ${req.body.country}\n`;
+    editString += `Favorite Post(s?): ${req.body.favorite_post}\n`;
+    editString += `Relationship Visible(?): ${req.body.relationship_visible}\n`;
+    editString += `Allow Friend: ${req.body.allow_friend}\n`;
+    editString += `Empathy Notification: ${req.body.empathy_notification}\n`;
+    editString += `Pronouns: ${req.body.pronouns}\n`;
+    editString += `Community Settings: ${req.body.community_settings}\n`;
+    editString += `Tester: ${req.body.tester}\n`;
 
     await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "created_account", editString.trim()]);
     
@@ -103,10 +158,37 @@ router.put('/accounts/:id', async (req, res) => {
     if (original_account.game_experience != req.body.game_experience) editString += `Game Experience: ${original_account.game_experience} -> ${req.body.game_experience}\n`;
     if (original_account.language != req.body.language) editString += `Language Code: ${original_account.language} -> ${req.body.language}\n`;
     if (original_account.country != req.body.country) editString += `Country Code: ${original_account.country} -> ${req.body.country}\n`;
+    if (original_account.favorite_post != req.body.favorite_post) editString += `Favorite Post(s?): ${original_account.favorite_post} -> ${req.body.favorite_post}\n`;
+    if (original_account.relationship_visible != req.body.relationship_visible) editString += `Relationship Visible(?): ${original_account.relationship_visible} -> ${req.body.relationship_visible}\n`;
+    if (original_account.allow_friend != req.body.allow_friend) editString += `Allow Friend: ${original_account.allow_friend} -> ${req.body.allow_friend}\n`;
+    if (original_account.empathy_notification != req.body.empathy_notification) editString += `Empathy Notification: ${original_account.empathy_notification} -> ${req.body.empathy_notification}\n`;
+    if (original_account.pronouns != req.body.pronouns) editString += `Pronouns: ${original_account.pronouns} -> ${req.body.pronouns}\n`;
+    if (original_account.community_settings != req.body.community_settings) editString += `Community Settings: ${original_account.community_settings} -> ${req.body.community_settings}\n`;
+    if (original_account.tester != req.body.tester) editString += `Tester: ${original_account.tester} -> ${req.body.tester}\n`;
 
     if (editString != ogEditString) {
-        await query(`UPDATE accounts SET pid=?, nnid=?, mii=?, mii_name=?, mii_hash=?, bio=?, admin=?, banned=?, 3ds_service_token=?, wiiu_service_token=?, game_experience=?, language=?, country=? WHERE id=?`,
-        [req.body.pid, req.body.nnid, req.body.mii, req.body.mii_name, req.body.mii_hash, req.body.bio, req.body.admin, req.body.banned, req.body.threeds_service_token, req.body.wiiu_service_token, req.body.game_experience, req.body.language, req.body.country, req.params.id]);    
+        await query(`UPDATE accounts SET pid=?, nnid=?, mii=?, mii_name=?, mii_hash=?, bio=?, admin=?, banned=?, 3ds_service_token=?, wiiu_service_token=?, game_experience=?, language=?, country=?, favorite_post=?, relationship_visible=?, allow_friend=?, empathy_notification=?, pronouns=?, community_settings=?, tester=? WHERE id=?`,
+        [req.body.pid,
+        req.body.nnid,
+        req.body.mii,
+        req.body.mii_name,
+        req.body.mii_hash,
+        req.body.bio,
+        req.body.admin,
+        req.body.banned,
+        req.body.threeds_service_token,
+        req.body.wiiu_service_token,
+        req.body.game_experience,
+        req.body.language,
+        req.body.country,
+        req.body.favorite_post,
+        req.body.relationship_visible,
+        req.body.allow_friend,
+        req.body.empathy_notification,
+        req.body.pronouns,
+        req.body.community_settings,
+        req.body.tester,
+        req.params.id]);    
 
         await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "altered_account", editString.trim()]);
     }
@@ -198,6 +280,8 @@ router.post('/communities/new', async (req, res) => {
     }
 
     res.sendStatus(201);
+
+    await common.discord.createNewCommunityWebhookMessage(id.insertId)
 })
 
 router.put('/communities/:id', async (req, res) => {

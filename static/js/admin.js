@@ -212,6 +212,13 @@ async function submitNewAccount() {
     const game_experience = document.getElementById('game_experience').value
     const language = document.getElementById('language').value
     const country = document.getElementById('country').value
+    const favorite_post = document.getElementById('favorite_post').value
+    const relationship_visible = document.getElementById('relationship_visible').value
+    const allow_friend = document.getElementById('allow_friend').value
+    const empathy_notification = document.getElementById('empathy_notification').value
+    const community_settings = document.getElementById('community_settings').value
+    const pronouns = document.getElementById('pronouns').value
+    const tester = document.getElementById('tester').value
     
     const body = {
         pid : pid,
@@ -226,7 +233,14 @@ async function submitNewAccount() {
         wiiu_service_token : wiiu_service_token,
         game_experience : game_experience,
         language : language,
-        country : country
+        country : country,
+        favorite_post : favorite_post,
+        relationship_visible : relationship_visible,
+        allow_friend : allow_friend,
+        empathy_notification : empathy_notification,
+        community_settings : community_settings,
+        pronouns : pronouns,
+        tester : tester
     }
 
     console.log(body)
@@ -260,6 +274,13 @@ async function submitEditedAccount() {
     const game_experience = document.getElementById('game_experience').value
     const language = document.getElementById('language').value
     const country = document.getElementById('country').value
+    const favorite_post = document.getElementById('favorite_post').value
+    const relationship_visible = document.getElementById('relationship_visible').value
+    const allow_friend = document.getElementById('allow_friend').value
+    const empathy_notification = document.getElementById('empathy_notification').value
+    const community_settings = document.getElementById('community_settings').value
+    const pronouns = document.getElementById('pronouns').value
+    const tester = document.getElementById('tester').value
     
     const body = {
         pid : pid,
@@ -274,10 +295,15 @@ async function submitEditedAccount() {
         wiiu_service_token : wiiu_service_token,
         game_experience : game_experience,
         language : language,
-        country : country
+        country : country,
+        favorite_post : favorite_post,
+        relationship_visible : relationship_visible,
+        allow_friend : allow_friend,
+        empathy_notification : empathy_notification,
+        community_settings : community_settings,
+        pronouns : pronouns,
+        tester : tester
     }
-
-    console.log(body)
 
     fetch(window.location.pathname, {
         method: "PUT",
