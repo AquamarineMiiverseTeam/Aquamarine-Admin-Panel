@@ -7,6 +7,11 @@
     border-bottom: 1px solid var(--bs-table-striped-color);
 }
 
+table {
+    max-width: 98%;
+    margin: 0 auto;
+}
+
 table img {
     display: block;
     margin-left: auto;
@@ -14,8 +19,10 @@ table img {
 }
 
 img {
-    border-radius: 5px;
+    border-radius: 2px;
     border: 1px solid rgb(214, 214, 214);
+
+    background-color: white;
 }
 
 .center {
@@ -30,4 +37,51 @@ img {
 .select {
     display: flex;
     justify-content:space-evenly;
+}
+
+.navbar a {
+    width: 150px;
+
+    display: inline-block;
+
+    color: white;
+    text-decoration: none;
+    text-align: center;
+
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.navbar span:first-child {
+    margin-left: 15px;
+    margin-right: 20px;
+}
+
+.navbar span {
+    color: white;
+    font-size: 20px;
+
+    line-height: 1;
+}
+
+.navbar {
+    border-radius: 0 !important;
+    box-shadow: 0px 2px 2px #595959;
+    background: -webkit-linear-gradient(#474747, #222);
+}
+
+.table-header {
+    width: 100%;
+
+    margin: 0;
+
+    padding: 10px;
+    padding-left: 6px;
+    padding-bottom: 20px;
+
+    background: -webkit-linear-gradient(white, rgb(228, 228, 228));
+}
+
+#clear-search-query {
+    margin-right: 15px;
 }

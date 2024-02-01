@@ -1,5 +1,5 @@
 var pjax = new Pjax({
-    selectors: ["body"]
+    selectors: [".wrapper"]
 })
 
 function confirmDeletionCommunity(id) {
@@ -16,35 +16,35 @@ function confirmDeletionAccount(id) {
     }
 }
 
-function moderatePost(id) {
-    console.log(id)
+async function moderatePost(id) {
+    document.querySelector(`input[type=checkbox][postid="${id}"]`).disabled = true
 
     fetch(`/posts/${id}/moderate`, {
         method: "POST"
     }).then(res => {
         if (res.status === 200) {
-            pjax.loadUrl(window.location.pathname)
+            document.querySelector(`input[type=checkbox][postid="${id}"]`).disabled = false
         } else {
-            console.log(`Status recieved ${res.status}`)
+            alert(`Error with moderating post: ${id}!!!`)
         }
     })
 }
 
 const readUploadedFile = (inputFile) => {
     const temporaryFileReader = new FileReader();
-  
+
     return new Promise((resolve, reject) => {
-      temporaryFileReader.onerror = () => {
-        temporaryFileReader.abort();
-        reject(new DOMException("Problem parsing input file."));
-      };
-  
-      temporaryFileReader.onload = () => {
-        resolve(temporaryFileReader.result);
-      };
-      temporaryFileReader.readAsDataURL(inputFile);
+        temporaryFileReader.onerror = () => {
+            temporaryFileReader.abort();
+            reject(new DOMException("Problem parsing input file."));
+        };
+
+        temporaryFileReader.onload = () => {
+            resolve(temporaryFileReader.result);
+        };
+        temporaryFileReader.readAsDataURL(inputFile);
     });
-  };
+};
 
 
 async function submitEditedCommunity() {
@@ -73,30 +73,30 @@ async function submitEditedCommunity() {
     if (icon_dom.files[0]) {
         icon = (await readUploadedFile(icon_dom.files[0])).slice(23, Infinity)
     }
-    
+
     if (banner_ctr_dom.files[0]) {
         banner_ctr = (await readUploadedFile(banner_ctr_dom.files[0])).slice(23, Infinity)
     }
-    
+
     if (banner_wup_dom.files[0]) {
         banner_wup = (await readUploadedFile(banner_wup_dom.files[0])).slice(23, Infinity)
     }
-    
+
     const body = {
-        name : name,
-        desc : desc,
-        title_ids : title_ids,
-        pid : pid,
-        app_data : app_data,
-        platform : platform,
-        post_type : post_type,
-        type : type,
-        parent_community_id : parent_community_id,
-        ingame_only : ingame_only,
-        special_community : special_community,
-        icon : icon,
-        banner_ctr : banner_ctr,
-        banner_wup : banner_wup
+        name: name,
+        desc: desc,
+        title_ids: title_ids,
+        pid: pid,
+        app_data: app_data,
+        platform: platform,
+        post_type: post_type,
+        type: type,
+        parent_community_id: parent_community_id,
+        ingame_only: ingame_only,
+        special_community: special_community,
+        icon: icon,
+        banner_ctr: banner_ctr,
+        banner_wup: banner_wup
     }
 
     console.log(body)
@@ -141,29 +141,29 @@ async function submitNewCommunity() {
     if (icon_dom.files[0]) {
         icon = (await readUploadedFile(icon_dom.files[0])).slice(23, Infinity)
     }
-    
+
     if (banner_ctr_dom.files[0]) {
         banner_ctr = (await readUploadedFile(banner_ctr_dom.files[0])).slice(23, Infinity)
     }
-    
+
     if (banner_wup_dom.files[0]) {
         banner_wup = (await readUploadedFile(banner_wup_dom.files[0])).slice(23, Infinity)
     }
-    
+
     const body = {
-        name : name,
-        desc : desc,
-        title_ids : title_ids,
-        pid : pid,
-        app_data : app_data,
-        platform : platform,
-        post_type : post_type,
-        type : type,
-        parent_community_id : parent_community_id,
-        ingame_only : ingame_only,
-        icon : icon,
-        banner_ctr : banner_ctr,
-        banner_wup : banner_wup
+        name: name,
+        desc: desc,
+        title_ids: title_ids,
+        pid: pid,
+        app_data: app_data,
+        platform: platform,
+        post_type: post_type,
+        type: type,
+        parent_community_id: parent_community_id,
+        ingame_only: ingame_only,
+        icon: icon,
+        banner_ctr: banner_ctr,
+        banner_wup: banner_wup
     }
 
     console.log(body)
@@ -219,28 +219,28 @@ async function submitNewAccount() {
     const community_settings = document.getElementById('community_settings').value
     const pronouns = document.getElementById('pronouns').value
     const tester = document.getElementById('tester').value
-    
+
     const body = {
-        pid : pid,
-        nnid : nnid,
-        mii : mii,
-        mii_name : mii_name,
-        mii_hash : mii_hash,
-        bio : bio,
-        admin : admin,
-        banned : banned,
-        threeds_service_token : threeds_service_token,
-        wiiu_service_token : wiiu_service_token,
-        game_experience : game_experience,
-        language : language,
-        country : country,
-        favorite_post : favorite_post,
-        relationship_visible : relationship_visible,
-        allow_friend : allow_friend,
-        empathy_notification : empathy_notification,
-        community_settings : community_settings,
-        pronouns : pronouns,
-        tester : tester
+        pid: pid,
+        nnid: nnid,
+        mii: mii,
+        mii_name: mii_name,
+        mii_hash: mii_hash,
+        bio: bio,
+        admin: admin,
+        banned: banned,
+        threeds_service_token: threeds_service_token,
+        wiiu_service_token: wiiu_service_token,
+        game_experience: game_experience,
+        language: language,
+        country: country,
+        favorite_post: favorite_post,
+        relationship_visible: relationship_visible,
+        allow_friend: allow_friend,
+        empathy_notification: empathy_notification,
+        community_settings: community_settings,
+        pronouns: pronouns,
+        tester: tester
     }
 
     console.log(body)
@@ -281,28 +281,28 @@ async function submitEditedAccount() {
     const community_settings = document.getElementById('community_settings').value
     const pronouns = document.getElementById('pronouns').value
     const tester = document.getElementById('tester').value
-    
+
     const body = {
-        pid : pid,
-        nnid : nnid,
-        mii : mii,
-        mii_name : mii_name,
-        mii_hash : mii_hash,
-        bio : bio,
-        admin : admin,
-        banned : banned,
-        threeds_service_token : threeds_service_token,
-        wiiu_service_token : wiiu_service_token,
-        game_experience : game_experience,
-        language : language,
-        country : country,
-        favorite_post : favorite_post,
-        relationship_visible : relationship_visible,
-        allow_friend : allow_friend,
-        empathy_notification : empathy_notification,
-        community_settings : community_settings,
-        pronouns : pronouns,
-        tester : tester
+        pid: pid,
+        nnid: nnid,
+        mii: mii,
+        mii_name: mii_name,
+        mii_hash: mii_hash,
+        bio: bio,
+        admin: admin,
+        banned: banned,
+        threeds_service_token: threeds_service_token,
+        wiiu_service_token: wiiu_service_token,
+        game_experience: game_experience,
+        language: language,
+        country: country,
+        favorite_post: favorite_post,
+        relationship_visible: relationship_visible,
+        allow_friend: allow_friend,
+        empathy_notification: empathy_notification,
+        community_settings: community_settings,
+        pronouns: pronouns,
+        tester: tester
     }
 
     fetch(window.location.pathname, {
@@ -341,4 +341,68 @@ function loadPostTimes() {
         var date = new Date(row.cells[0].innerText)
         row.cells[0].innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     }
+}
+
+function sort_account_table(index, id) {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById(id);
+    filter = input.value.toUpperCase();
+    table = document.getElementById("admin_table");
+    tr = table.getElementsByTagName("tr");
+
+    var found = 0;
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[index];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                found += 1;
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    document.getElementById("found").innerText = `Found ${found} Users`;
+
+    if (id == "clear-search-query") {
+        document.querySelectorAll("input").forEach((d) => {
+            d.value = "";
+        })
+    }
+}
+
+function sort_community_table(index, id) {
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById(id);
+    filter = input.value.toUpperCase();
+    table = document.getElementById("community_table");
+    tr = table.getElementsByTagName("tr");
+
+    var found = 0;
+
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[index];
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                found += 1;
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    if (id == "clear-search-query") {
+        document.querySelectorAll("input").forEach((d) => {
+            d.value = "";
+        });
+    }
+
+    document.getElementById("found").innerText = `Found ${found} Communities`
 }

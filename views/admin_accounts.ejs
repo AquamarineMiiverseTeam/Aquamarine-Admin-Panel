@@ -7,7 +7,7 @@
     <title>Aquamarine Admin Panel</title>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/admin.css">
 
     <script src="/js/pjax.js"></script>
@@ -15,11 +15,18 @@
 </head>
 
 <body>
+    <%- include("partials/navbar.ejs") %>
     <div class="wrapper">
-        <%- include("partials/navbar.ejs") %>
+        <div class="table-header">
+            <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/accounts/new')" style="margin: 5px;">Create New Account</button>
+            <button type="button" class="btn btn-info" onclick="sort_account_table(4, this.id)" value="" id="clear-search-query">Clear Search Querys</button>
+            <input placeholder="NNID.." id="sort-nnid" type="search" oninput="sort_account_table(3, this.id)">
+            <input placeholder="PID.." id="sort-pid" type="search" oninput="sort_account_table(2, this.id)">
+            <input placeholder="Mii Name.." id="sort-mii-name" type="search" oninput="sort_account_table(4, this.id)">
+            <span id="found"></span>
+        </div>
+        
 
-        <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/accounts/new')" style="margin: 5px;">Create New Account</button>
-    
         <table id="admin_table" class="table table-striped table-bordered" style="padding: 20px;">
             <thead class="thead-dark">
                 <tr>
@@ -35,11 +42,7 @@
                     <th>Language</th>
                     <th>Country</th>
                     <th>Favorite Post</th>
-                    <th>Relationship Visible</th>
-                    <th>Allow Friend</th>
-                    <th>Empathy Notification</th>
                     <th>Pronouns</th>
-                    <th>Community Settings</th>
                     <th>Tester</th>
                     <th>Edit</th>
                     <th>Delete</th>
@@ -56,17 +59,28 @@
                         <td><img width="48px" alt="<%= account.mii_hash %>" title="<%= account.mii_hash %>" src="https://mii-images.account.nintendo.net/<%= account.mii_hash %>_normal_face.png"></td>
                         <td><%= account.admin %></td>
                         <td><%= account.bio %></td>
-                        <td><%= account.game_experience %></td>
+                        <td>
+                            <% switch (account.game_experience) {
+                                case 0:%>
+                                Beginner
+                                <%break;
+                                case 1:%>
+                                Intermediate
+                                <%break;
+                                case 2:%>
+                                Expert
+                                <%break;
+                                default:%>
+                                ???????
+                                <%break;
+                            } %>
+                        </td>
                         <td><%= account.language %></td>
                         <td><%= account.country %></td>
-                        <td><%= account.favorite_post %></td>
-                        <td><%= account.relationship_visible %></td>
-                        <td><%= account.allow_friend %></td>
-                        <td><%= account.empathy_notification %></td>
+                        <td><%= account.favorite_post %></td>              
                         <td><%= account.pronouns %></td>
-                        <td><%= account.community_settings %></td>
-                        <td><%= account.tester %></td>
-                        <td><a type="button" class="btn btn-secondary" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</a></td>
+                        <td><%= (account.tester == 0) ? "false" : "true" %></td>
+                        <td><a type="button" class="btn btn-info" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</a></td>
                         <td>
                             <button accountid_delete=<%= account.id %> type="button" class="btn btn-danger" onclick="confirmDeletionAccount(this.attributes[0].value)">Delete</button>
                             <button accountid_confirm=<%= account.id %> type="button" class="btn btn-danger" style="display: none;" onclick="deleteAccount(this.attributes[0].value)">Confirm</button>

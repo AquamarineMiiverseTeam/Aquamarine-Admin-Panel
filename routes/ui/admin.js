@@ -235,8 +235,45 @@ router.get('/communities/:id', async(req, res) => {
 })
 
 router.get('/communities/:id/posts', async (req, res) => {
-    const posts = await database_query.getPosts(req.params.id, 'desc', null, "", 0, req);
+    const posts = await query("SELECT * FROM posts WHERE community_id=? ORDER BY id DESC", req.params.id)
     const community = await database_query.getCommunity(req.params.id, req);
+
+    for (let i = 0; i < posts.length; i++) {
+        const account = (await query("SELECT * FROM accounts WHERE id=?", posts[i].account_id))[0];
+
+        var mii_face;
+
+        switch (posts[i].feeling_id) {
+            case 0:
+                mii_face = "normal_face";
+                break;
+            case 1:
+                mii_face = "happy_face";
+                break;
+            case 2:
+                mii_face = "like_face";
+                break;
+            case 3:
+                mii_face = "surprised_face";
+                break;
+            case 4:
+                mii_face = "frustrated_face";
+                break;
+            case 5:
+                mii_face = "puzzled_face";
+                break;
+            default:
+                mii_face = "normal_face";
+                break;
+        }
+
+        posts[i].mii_image = `http://mii-images.account.nintendo.net/${account.mii_hash}_${mii_face}.png`;
+        posts[i].mii_name = account.mii_name;
+
+        posts[i].is_empathied_by_user = (await query("SELECT * FROM empathies WHERE post_id=? AND account_id=?", [posts[i].id, req.account[0].id])).length;
+        posts[i].empathy_count = (await query("SELECT * FROM empathies WHERE post_id=?", posts[i].id)).length;
+        posts[i].admin = account.admin;
+    }
 
     res.render('admin_community_posts', {
         posts : posts,
@@ -346,7 +383,12 @@ router.post('/posts/:post_id/moderate', async (req, res) => {
 
 // audit logs endpoint
 router.get('/audit', async (req, res) => {
-    var actions = await query("SELECT * FROM admin_actions ORDER BY create_time desc")
+    var actions = await query(`
+    SELECT * 
+    FROM admin_actions 
+    INNER JOIN accounts
+    ON accounts.nnid = admin_actions.admin
+    ORDER BY admin_actions.create_time DESC`)
 
     res.render('admin_audit.ejs', {
         account : req.account[0],
