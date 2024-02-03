@@ -121,7 +121,7 @@ async function submitEditedCommunity() {
 
     console.log(body)
 
-    fetch(window.location.pathname, {
+    fetch(`/api/communities/${document.querySelector(".wrapper").getAttribute("data-community-id")}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -195,7 +195,7 @@ async function submitNewCommunity() {
 
     console.log(body)
 
-    fetch(window.location.pathname, {
+    fetch("/api/communities/new", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -215,7 +215,7 @@ async function submitNewCommunity() {
 }
 
 function deleteCommunity(id) {
-    fetch(`/communities/${id}`, {
+    fetch(`/api/communities/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -280,7 +280,7 @@ async function submitNewAccount() {
 
     console.log(body)
 
-    fetch(window.location.pathname, {
+    fetch("/api/accounts/new", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -344,7 +344,7 @@ async function submitEditedAccount() {
         tester: tester
     }
 
-    fetch(window.location.pathname, {
+    fetch(`/api/accounts/${document.querySelector(".wrapper").getAttribute("data-account-id")}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
