@@ -1,0 +1,11 @@
+<%- include("./partials/header.ejs") %>
+
+<body>
+    <%- include("./partials/navbar_login") %>
+
+    <div class="log_in_wrapper">
+        <input name="network_id" type="text" maxlength="32" placeholder="Network ID..">
+        <input name="password" type="password" placeholder="Password..">
+        <button type="button" class="btn btn-primary" onclick="log_in()">Log In</button>
+    </div>
+</body>

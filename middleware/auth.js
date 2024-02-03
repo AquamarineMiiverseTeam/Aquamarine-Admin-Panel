@@ -4,57 +4,28 @@ const util = require('util')
 
 const con = require('../../Aquamarine-Utils/database_con');
 const query = util.promisify(con.query).bind(con);
+const crypto = require("crypto");
+const logger = require('./log');
 
 const strict_mode = true;
 
 async function auth(req, res, next) {
     if (req.path.includes("img") || req.path.includes("css") || req.path.includes("js")) { next(); return; }
 
-    //Assigning variables
-    var param_pack = req.get('x-nintendo-parampack');
-    var service_token = req.get('x-nintendo-servicetoken')
+    if (!req.cookies.password || !req.cookies.network_id) { res.render("log_in.ejs"); console.log(logger.error("No password or network_id cookie!")); return; }
 
-    //Check if the request is faulty or not.
-    if (!service_token || !param_pack || service_token.length < 42) { res.sendStatus(401); console.log("[ERROR] (%s) Recieved either no Param Pack, no Service Token, or invalid Service Token.".red, moment().format("HH:mm:ss")); return;}
+    const account = (await query("SELECT * FROM accounts WHERE nnid=?", req.cookies.network_id));
+    if (!account[0]) {res.sendStatus(404); return;}
 
-    service_token = service_token.slice(0, 42);
-
-    //Translating Param_Pack into a more readable format to collect data from.
-    var base64Result = (Buffer.from(param_pack, 'base64').toString()).slice(1, -1).split("\\");
-    req.param_pack = {};
-    req.service_token = service_token;
-
-    for (let i = 0; i < base64Result.length; i += 2) {
-        req.param_pack[base64Result[i].trim()] = base64Result[i + 1].trim();
+    var passwordHash = crypto.createHash('sha256').update(req.cookies.password + account[0].password_salt).digest('hex');
+    if (passwordHash == account[0].password_hash) {
+        if (account[0].admin != 1) {res.sendStatus(400); console.log(logger.error(`${account[0].nnid} is trying to access the admin panel!!!!!!`)); return;}
+        req.account = account;
+        next()
+    } else {
+        res.sendStatus(400);
+        console.log(logger.error("Password Mismatch!"))
     }
-
-    //Grabbing the correct service token
-    var sql;
-    switch (parseInt(req.param_pack.platform_id)) {
-        case 0:
-            sql = "SELECT * FROM accounts WHERE 3ds_service_token = ?";
-            req.platform = "3ds";
-            break;
-        case 1:
-        default:
-            sql = "SELECT * FROM accounts WHERE wiiu_service_token = ?";
-            req.platform = "wiiu";
-            break;
-    }
-
-    //Grabbing account from database
-    var account = await query(sql, service_token);
-
-    //If there is no account, then send a 404 (Not found) and log the occurence
-    if (account.length == 0) { res.sendStatus(404); console.log("[ERROR] (%s) Access to admin panel attempted by someone with no account.".red, moment().format("HH:mm:ss")); return; }
-
-    //Set the requests account to be the newly found account from the database
-    req.account = account;
-
-    //If the account doesnt have admin, send a 403 (Forbidden) and log the occurence
-    if (account[0].admin == 0) { res.sendStatus(403); console.log("[ERROR] (%s) Account without admin attempted to access admin panel.".red, moment().format("HH:mm:ss")); return; }
-
-    next();
 }
 
 module.exports = auth

@@ -1,6 +1,26 @@
 var pjax = new Pjax({
-    selectors: [".wrapper"]
+    selectors: [".wrapper", ".alerts"]
 })
+
+document.addEventListener("pjax:send", () => {
+    document.querySelector(".alert-info").style.display = "none";
+    document.querySelector(".alert-success").style.display = "none";
+})
+
+document.addEventListener("pjax:complete", () => {
+    loadPostTimes();
+    console.log("pjax complete")
+})
+
+function log_in() {
+    const password = document.querySelector('input[name="password"]').value
+    const network_id = document.querySelector('input[name="network_id"]').value
+
+    document.cookie = `password=${password}`;
+    document.cookie = `network_id=${network_id}`;
+
+    pjax.loadUrl("/");
+}
 
 function confirmDeletionCommunity(id) {
     if (confirm("Are you sure about deleting this community?") == true) {
@@ -19,7 +39,7 @@ function confirmDeletionAccount(id) {
 async function moderatePost(id) {
     document.querySelector(`input[type=checkbox][postid="${id}"]`).disabled = true
 
-    fetch(`/posts/${id}/moderate`, {
+    fetch(`/api/posts/${id}/moderate`, {
         method: "POST"
     }).then(res => {
         if (res.status === 200) {
@@ -107,9 +127,16 @@ async function submitEditedCommunity() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    }).then(res => {
+    }).then(async res => {
         if (res.status === 200) {
-            pjax.loadUrl("/communities")
+            var resp = await res.json()
+            console.log("pjax before")
+            await pjax.loadUrl("/communities");
+            console.log("pjax after")
+            console.log(document.querySelector(".alert-info"))
+            document.querySelector(".alert-info strong").innerText = resp.header
+            document.querySelector(".alert-info span").innerText = resp.message
+            document.querySelector(".alert-info").style.display = "block"
         } else {
             console.log(`Status recieved ${res.status}`)
         }
@@ -174,9 +201,13 @@ async function submitNewCommunity() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    }).then(res => {
+    }).then(async res => {
         if (res.status === 201) {
+            var resp = await res.json()
             pjax.loadUrl("/communities")
+            document.querySelector(".alert-success strong").innerText = resp.header
+            document.querySelector(".alert-success span").innerText = resp.message
+            document.querySelector(".alert-success").style.display = "block"
         } else {
             console.log(`Status recieved ${res.status}`)
         }
@@ -189,9 +220,13 @@ function deleteCommunity(id) {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(res => {
+    }).then(async res => {
         if (res.status === 200) {
-            pjax.loadUrl("/communities")
+            var resp = await res.json()
+            await pjax.loadUrl("/communities")
+            document.querySelector(".alert-success strong").innerText = resp.header
+            document.querySelector(".alert-success span").innerText = resp.message
+            document.querySelector(".alert-success").style.display = "block"
         } else {
             console.log(`Status recieved ${res.status}`)
         }
@@ -251,9 +286,13 @@ async function submitNewAccount() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    }).then(res => {
+    }).then(async res => {
         if (res.status === 201) {
-            pjax.loadUrl("/accounts")
+            var resp = await res.json()
+            await pjax.loadUrl("/accounts")
+            document.querySelector(".alert-success strong").innerText = resp.header
+            document.querySelector(".alert-success span").innerText = resp.message
+            document.querySelector(".alert-success").style.display = "block"
         } else {
             console.log(`Status recieved ${res.status}`)
         }
@@ -311,9 +350,13 @@ async function submitEditedAccount() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(body)
-    }).then(res => {
+    }).then(async res => {
         if (res.status === 200) {
-            pjax.loadUrl("/accounts")
+            var resp = await res.json()
+            await pjax.loadUrl("/accounts")
+            document.querySelector(".alert-success strong").innerText = resp.header
+            document.querySelector(".alert-success span").innerText = resp.message
+            document.querySelector(".alert-success").style.display = "block"
         } else {
             console.log(`Status recieved ${res.status}`)
         }
@@ -326,9 +369,13 @@ function deleteAccount(id) {
         headers: {
             "Content-Type": "application/json"
         }
-    }).then(res => {
+    }).then(async res => {
         if (res.status === 200) {
-            pjax.loadUrl("/accounts")
+            var resp = await res.json()
+            await pjax.loadUrl("/accounts")
+            document.querySelector(".alert-success strong").innerText = resp.header
+            document.querySelector(".alert-success span").innerText = resp.message
+            document.querySelector(".alert-success").style.display = "block"
         } else {
             console.log(`Status recieved ${res.status}`)
         }

@@ -1,29 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aquamarine Admin Panel</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/admin.css">
-
-    <script src="/js/pjax.js"></script>
-    <script src="/js/admin.js"></script>
-</head>
+<%- include("./partials/header.ejs") %>
 
 <body>
     <%- include("partials/navbar.ejs") %>
+
+    <div class="alert alert-success" role="alert" style="display: none;">
+        <strong>Community Created!</strong>
+        <span>StreetPass Plaza</span>
+    </div>
+
+    <div class="alert alert-info" role="alert" style="display: none;">
+        <strong>Community Edited!</strong>
+        <span>StreetPass Plaza</span>
+    </div>
+    
     <div class="wrapper">
         <div class="table-header">
             <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/accounts/new')" style="margin: 5px;">Create New Account</button>
-            <button type="button" class="btn btn-info" onclick="sort_account_table(4, this.id)" value="" id="clear-search-query">Clear Search Querys</button>
-            <input placeholder="NNID.." id="sort-nnid" type="search" oninput="sort_account_table(3, this.id)">
-            <input placeholder="PID.." id="sort-pid" type="search" oninput="sort_account_table(2, this.id)">
-            <input placeholder="Mii Name.." id="sort-mii-name" type="search" oninput="sort_account_table(4, this.id)">
-            <span id="found"></span>
+            <div id="filtering">
+                <button type="button" class="btn btn-info" onclick="sort_account_table(4, this.id)" value="" id="clear-search-query">Clear Search Querys</button>
+                <input placeholder="NNID.." id="sort-nnid" type="search" oninput="sort_account_table(3, this.id)">
+                <span id="found"></span>
+            </div>
         </div>
         
 
@@ -32,20 +29,20 @@
                 <tr>
                     <th>Time Created</th>
                     <th>ID</th>
-                    <th>PID</th>
+                    <th id="hide">PID</th>
                     <th>NNID</th>
-                    <th>Mii Name</th>
+                    <th id="hide">Mii Name</th>
                     <th>Mii</th>
-                    <th>Admin</th>
-                    <th>Bio</th>
-                    <th>Game Experience</th>
-                    <th>Language</th>
-                    <th>Country</th>
-                    <th>Favorite Post</th>
-                    <th>Pronouns</th>
-                    <th>Tester</th>
+                    <th id="hide">Admin</th>
+                    <th id="hide">Bio</th>
+                    <th id="hide">Game Experience</th>
+                    <th id="hide">Language</th>
+                    <th id="hide">Country</th>
+                    <th id="hide">Favorite Post</th>
+                    <th id="hide">Pronouns</th>
+                    <th id="hide">Tester</th>
                     <th>Edit</th>
-                    <th>Delete</th>
+                    <th id="hide">Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,13 +50,13 @@
                     <tr>
                         <td><%= account.create_time %></td>
                         <td><%= account.id %></td>
-                        <td><%= account.pid %></td>
+                        <td id="hide"><%= account.pid %></td>
                         <td><%= account.nnid %></td>
-                        <td><%= account.mii_name %></td>
+                        <td id="hide"><%= account.mii_name %></td>
                         <td><img width="48px" alt="<%= account.mii_hash %>" title="<%= account.mii_hash %>" src="https://mii-images.account.nintendo.net/<%= account.mii_hash %>_normal_face.png"></td>
-                        <td><%= account.admin %></td>
-                        <td><%= account.bio %></td>
-                        <td>
+                        <td id="hide"><%= account.admin %></td>
+                        <td id="hide"><%= account.bio %></td>
+                        <td id="hide">
                             <% switch (account.game_experience) {
                                 case 0:%>
                                 Beginner
@@ -75,13 +72,13 @@
                                 <%break;
                             } %>
                         </td>
-                        <td><%= account.language %></td>
-                        <td><%= account.country %></td>
-                        <td><%= account.favorite_post %></td>              
-                        <td><%= account.pronouns %></td>
-                        <td><%= (account.tester == 0) ? "false" : "true" %></td>
+                        <td id="hide"><%= account.language %></td>
+                        <td id="hide"><%= account.country %></td>
+                        <td id="hide"><%= account.favorite_post %></td>              
+                        <td id="hide"><%= account.pronouns %></td>
+                        <td id="hide"><%= (account.tester == 0) ? "false" : "true" %></td>
                         <td><a type="button" class="btn btn-info" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</a></td>
-                        <td>
+                        <td id="hide">
                             <button accountid_delete=<%= account.id %> type="button" class="btn btn-danger" onclick="confirmDeletionAccount(this.attributes[0].value)">Delete</button>
                             <button accountid_confirm=<%= account.id %> type="button" class="btn btn-danger" style="display: none;" onclick="deleteAccount(this.attributes[0].value)">Confirm</button>
                         </td>

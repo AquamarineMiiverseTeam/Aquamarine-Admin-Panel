@@ -8,8 +8,11 @@
 }
 
 table {
-    max-width: 98%;
+    max-width: 100%;
     margin: 0 auto;
+
+    text-overflow: ellipsis;
+    overflow-x: scroll;
 }
 
 table img {
@@ -36,38 +39,16 @@ img {
 
 .select {
     display: flex;
-    justify-content:space-evenly;
-}
-
-.navbar a {
-    width: 150px;
-
-    display: inline-block;
-
-    color: white;
-    text-decoration: none;
-    text-align: center;
-
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.navbar span:first-child {
-    margin-left: 15px;
-    margin-right: 20px;
+    justify-content: space-evenly;
 }
 
 .navbar span {
     color: white;
-    font-size: 20px;
-
-    line-height: 1;
 }
 
 .navbar {
     border-radius: 0 !important;
-    box-shadow: 0px 2px 2px #595959;
-    background: -webkit-linear-gradient(#474747, #222);
+    box-shadow: 0px 2px 2px #3b3b3b;
 }
 
 .table-header {
@@ -75,7 +56,6 @@ img {
 
     margin: 0;
 
-    padding: 10px;
     padding-left: 6px;
     padding-bottom: 20px;
 
@@ -84,4 +64,113 @@ img {
 
 #clear-search-query {
     margin-right: 15px;
+}
+
+a:focus {
+    background: -webkit-linear-gradient(#222, #474747);
+    outline: none;
+}
+
+.error_text {
+    margin-left: 25px;
+    font-weight: bold;
+
+    font-size: 30px;
+}
+
+.error_description {
+    margin-left: 25px;
+    display: block;
+    font-size: 20px;
+
+    margin-top: 5px;
+}
+
+.alert {
+    width: 80%;
+    margin: 0 auto;
+}
+
+input {
+    border: 1px solid #adadad;
+    border-radius: 2px;
+}
+
+#filtering {
+    margin-left: 5px;
+}
+
+.log_in_wrapper {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+}
+
+.log_in_wrapper span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.log_in_wrapper input {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.log_in_wrapper button {
+    margin-left: 5px;
+}
+
+@media only screen and (max-width: 780px) {
+    .navbar ul li:first-of-type {
+        display: none;
+    }
+
+    .navbar ul {
+        margin: 0;
+    }
+
+    .navbar ul li {
+        display: block;
+        text-align: center;
+        float: none;
+        
+        width: 100%;
+    }
+
+    .navbar ul li a {
+        width: 100%;
+    }
+
+    td {
+        max-width: 100px;
+        text-overflow: clip;
+    }
+
+    #ingame, #post_type, #description, #type, #platform, #delete, #filtering, #hide {
+        display: none;
+    }
+
+    img {
+        width: 25px;
+    }
+
+    button {
+        text-align: center;
+    }
+
+    button[communityid_delete] {
+        display: none;
+    }
+
+    * {
+        overflow-x: hidden;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: center;
+    }
 }
