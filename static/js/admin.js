@@ -112,6 +112,7 @@ async function submitEditedCommunity() {
     const ingame_only = document.getElementById('ingame_only').value
     const parent_community_id = document.getElementById('parent_community_id').value
     const special_community = document.getElementById('special').value
+    const app_name = document.getElementById('app_name').value
 
     var icon_dom = document.getElementById("icon")
     var banner_ctr_dom = document.getElementById("banner-ctr")
@@ -145,6 +146,7 @@ async function submitEditedCommunity() {
         parent_community_id: parent_community_id,
         ingame_only: ingame_only,
         special_community: special_community,
+        app_name : app_name,
         icon: icon,
         banner_ctr: banner_ctr,
         banner_wup: banner_wup
@@ -188,6 +190,7 @@ async function submitNewCommunity() {
     const type = document.getElementById('type').value
     const ingame_only = document.getElementById('ingame_only').value
     const parent_community_id = document.getElementById('parent_community_id').value
+    const app_name = document.getElementById('app_name').value
 
     var icon_dom = document.getElementById("icon")
     var banner_ctr_dom = document.getElementById("banner-ctr")
@@ -220,6 +223,7 @@ async function submitNewCommunity() {
         type: type,
         parent_community_id: parent_community_id,
         ingame_only: ingame_only,
+        app_name : app_name,
         icon: icon,
         banner_ctr: banner_ctr,
         banner_wup: banner_wup

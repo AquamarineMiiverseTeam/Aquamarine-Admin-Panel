@@ -64,6 +64,7 @@ route.put('/communities/:id', async (req, res) => {
     if (original_community.type != req.body.type) editString += `Community Type: ${original_community.type} -> ${req.body.type}\n`;
     if (original_community.post_type != req.body.post_type) editString += `Post Type: ${original_community.post_type} -> ${req.body.post_type}\n`;
     if (original_community.special_community != req.body.special_community) editString += `Special Community: ${original_community.special_community} -> ${req.body.special_community}\n`;
+    if (original_community.app_name != req.body.app_name) editString += `App Name: ${original_community.app_name} -> ${req.body.app_name}\n`;
 
     if (req.body.icon) {
         fs.writeFileSync(__dirname + `/../../CDN_Files/img/icons/${req.params.id}.jpg`, req.body.icon, 'base64');
@@ -92,7 +93,8 @@ route.put('/communities/:id', async (req, res) => {
             type : req.body.type,
             parent_community_id : req.body.parent_community_id,
             ingame_only : req.body.ingame_only,
-            special_community : req.body.special_community
+            special_community : req.body.special_community,
+            app_name : req.body.app_name
         })
 
         await db_con("admin_actions").insert({
@@ -116,10 +118,11 @@ route.post('/communities/new', async (req, res) => {
         post_type : req.body.post_type,
         type : req.body.type,
         parent_community_id : req.body.parent_community_id,
-        ingame_only : req.body.ingame_only
+        ingame_only : req.body.ingame_only,
+        app_name : req.body.app_name
     }))[0]
 
-    var editString = `${req.body.name} (ID: ${id.insertId})\n\n`;
+    var editString = `${req.body.name} (ID: ${id})\n\n`;
 
     editString += `Description: ${req.body.desc}\n`;
     editString += `App Data: ${req.body.app_data}\n`;
@@ -130,6 +133,7 @@ route.post('/communities/new', async (req, res) => {
     editString += `Platform: ${req.body.platform}\n`;
     editString += `Community Type: ${req.body.type}\n`;
     editString += `Post Type: ${req.body.post_type}\n`;
+    editString += `App Name: ${req.body.app_name}\n`;
 
     await db_con("admin_actions").insert({
         admin : req.account[0].nnid,
