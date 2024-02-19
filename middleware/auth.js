@@ -1,20 +1,13 @@
-const colors = require(process.cwd() + '/node_modules/colors');
-const moment = require(process.cwd() + '/node_modules/moment');
-const util = require('util')
-
-const con = require('../../Aquamarine-Utils/database_con');
-const query = util.promisify(con.query).bind(con);
+const db_con = require('../../Aquamarine-Utils/database_con');
 const crypto = require("crypto");
 const logger = require('./log');
-
-const strict_mode = true;
 
 async function auth(req, res, next) {
     if (req.path.includes("img") || req.path.includes("css") || req.path.includes("js")) { next(); return; }
 
     if (!req.cookies.password || !req.cookies.network_id) { res.render("log_in.ejs"); console.log(logger.error("No password or network_id cookie!")); return; }
 
-    const account = (await query("SELECT * FROM accounts WHERE nnid=?", req.cookies.network_id));
+    const account = (await db_con("accounts").where({nnid : req.cookies.network_id}))
     if (!account[0]) {res.sendStatus(404); return;}
 
     var passwordHash = crypto.createHash('sha256').update(req.cookies.password + account[0].password_salt).digest('hex');

@@ -1,8 +1,49 @@
-<div class="navbar navbar-inverse">
+<div class="navbar navbar-default">
     <ul class="nav navbar-nav">
-        <li><a href="javascript:void(0)" class="navbar-brand" onclick="pjax.loadUrl('/')">Aquamarine Admin Panel</a></li>
-        <li><a href="javascript:void(0)" onclick="pjax.loadUrl('/accounts')">Account Manager</a></li>
-        <li><a href="javascript:void(0)" onclick="pjax.loadUrl('/communities')">Community Manager</a></li>
-        <li><a href="javascript:void(0)" onclick="pjax.loadUrl('/audit')">Admin Audit Log</a></li>
+        <li><a data-selectable href="javascript:void(0)" class="navbar-brand" onclick="pjax.loadUrl('/')">Aquamarine Admin</a></li>
+        
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                Database Actions
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/accounts')">Account Manager</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/communities')">Community Manager</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/favorites')">Favorites Manager</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/empathies')">Empathies Manager</a></li>
+            </ul>
+        </li>
+
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                Administration Actions
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/bans')">Ban Manager</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/reports')">Reports</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/admin/audit')">Admin Audit Log</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/create_announcement')">Create Announcement</a></li>
+            </ul>
+        </li>
+
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                Analytics
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/post_analytics')">Post Analytics</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/popularity_ranking')">Popularity Rankings</a></li>
+                <li><a data-selectable href="javascript:void(0)" onclick="pjax.loadUrl('/analytics/api_calls')">API Calls</a></li>
+            </ul>
+        </li>
+
+        <li class="navbar-right admin_hello">
+            <img src="http://mii-images.account.nintendo.net/<%= account.mii_hash %>_normal_face.png">
+            <span><%= account.mii_name %></span>
+        </li>
     </ul>
+    <a href="javascript:void(0)" class="loading" style="display: none;"></a>
 </div>

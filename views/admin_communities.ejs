@@ -2,96 +2,60 @@
 
 <body>
     <%- include("partials/navbar.ejs") %>
-    <div class="alert alert-success" role="alert" style="display: none;">
-        <strong>Community Created!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
-    
-    <div class="alert alert-info" role="alert" style="display: none;">
-        <strong>Community Edited!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
 
     <div class="wrapper">
         <div class="table-header">
-            <button id="create_community" type="button" class="btn btn-primary" onclick="pjax.loadUrl('/communities/new')" style="margin: 5px;">Create New Community</button>
-
             <div id="filtering">
-                <button type="button" class="btn btn-info" onclick="sort_community_table(6, this.id)" value="" id="clear-search-query">Clear Search Querys</button>
-                <input placeholder="Community Name.." id="sort-community-name" type="search" oninput="sort_community_table(6, this.id)">
-                <select id="sort-community-platform" oninput="sort_community_table(2, this.id)"> 
-                    <optgroup>
-                        <option value="wiiu">Wii U Games</option>
-                        <option value="3ds">3DS Games</option>
-                        <option value="topic">General Topic</option>
-                    </optgroup>
-                </select>
-                <select id="sort-community-type" oninput="sort_community_table(3, this.id)"> 
-                    <optgroup>
-                        <option value="main">Main Communities</option>
-                        <option value="sub">Sub Communities</option>
-                        <option value="announcement">Announcement Communities</option>
-                        <option value="normal">Normal Communities</option>
-                        <option value=" ">All Communities</option>
-                    </optgroup>
-                </select>
-               
-                <span id="found"></span>
+                <button id="create_community" type="button" class="btn btn-primary" onclick="pjax.loadUrl('/communities/new')" style="margin: 5px;">Create New Community</button>
+                <div>
+                    Showing <select oninput="show_entries(this.value)">
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="60">60</option>
+                    <option value="80">80</option>
+                    <option value="<%= num_communities %>"><%= num_communities %></option>
+                    </select>Communities
+                </div>
+
+                <input placeholder="Community Name.." id="sort-community-name" type="search" oninput="search_communities_by_name(this.value)">
             </div>
         </div>
         <table id="community_table" class="table table-striped table-bordered" style="padding: 20px;">
             <thead class="thead-dark">
                 <tr>
-                    <th>Icon</th>
+                    <th style="width: 10px;">Icon</th>
                     <th>ID</th>
                     <th id="platform">Platform</th>
                     <th id="type">Type</th>
-                    <th id="post_type">Post Type</th>
-                    <th id="ingame">In-Game Only</th>
+                    <th id="post_type">PType</th>
+                    <th id="ingame">InGame</th>
                     <th>Community Name</th>
                     <th id="description">Description</th>
-                    <th>Posts</th>
-                    <th>Edit</th>
-                    <th id="delete">Delete</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <% for (let i=0; i < communities.length; i++) { const community=communities[i];%>
-    
-                    <tr>
+
+                    <tr <%= (i >= 15) ? 'style=display:none' : "" %>>
                         <td><img src="/img/icons/<%= community.id %>.jpg" width="65px"></td>
+                        <td><%= community.id %></td>
+                        <td id="platform"><%= community.platform %></td>
+                        <td id="type"><%= community.type %></td>
+                        <td id="post_type"><%= community.post_type %></td>
+                        <td id="ingame"><%= community.ingame_only %></td>
+                        <td><%= community.name %></td>
+                        <td id="description"><%= community.description %></td>
                         <td>
-                            <%= community.id %>
-                        </td>
-                        <td id="platform">
-                            <%= community.platform %>
-                        </td>
-                        <td id="type">
-                            <%= community.type %>
-                        </td>
-                        <td id="post_type">
-                            <%= community.post_type %>
-                        </td>
-                        <td id="ingame">
-                            <%= community.ingame_only %>
-                        </td>
-                        <td>
-                            <%= community.name %>
-                        </td>
-                        <td id="description">
-                            <%= community.description %>
-                        </td>
-                        <td><button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/communities/<%= community.id %>/posts')">See Posts</button></td>
-                        <td><button type="button" class="btn btn-info" onclick="pjax.loadUrl('/communities/<%= community.id %>')">Edit</button></td>
-                        <td id="delete">
-                            <button communityid_delete=<%= community.id %> type="button" class="btn btn-danger" onclick="confirmDeletionCommunity(this.attributes[0].value)">Delete</button>
-                            <button communityid_confirm=<%= community.id %> type="button" class="btn btn-danger" style="display: none;" onclick="deleteCommunity(this.attributes[0].value)">Confirm</button>
+                            <div class="options_container">
+                                <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/communities/<%= community.id %>/posts')">See Posts</button>
+                                <button type="button" class="btn btn-info" onclick="pjax.loadUrl('/communities/<%= community.id %>')">Edit</button>
+                            </div>
                         </td>
                     </tr>
                     <%} %>
             </tbody>
         </table>
-        
     </div>
     
 </body>

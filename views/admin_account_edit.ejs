@@ -2,17 +2,8 @@
 
 <body>
     <%- include("partials/navbar.ejs") %>
-    <div class="alert alert-success" role="alert" style="display: none;">
-        <strong>Community Created!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
-    
-    <div class="alert alert-info" role="alert" style="display: none;">
-        <strong>Community Edited!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
     <div class="wrapper center" data-account-id="<%= editAccount.id %>">
-        <div style="width: 50%;">
+        <div style="width: 50%;" class="start-banner">
             <form>
                 <div class="form-row">
                     <div class="col">
@@ -104,7 +95,7 @@
                 </div>
             </form>
 
-            <div class="center">
+            <div class="center end-banner">
                 <button type="button" class="btn btn-secondary" style="margin-right: 20px;" onclick="history.back()">Cancel</button>
                 <button type="button" class="btn btn-success" onclick="submitEditedAccount()">Commit Edits</button>
             </div>

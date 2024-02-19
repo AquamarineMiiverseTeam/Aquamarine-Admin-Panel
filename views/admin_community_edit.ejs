@@ -2,15 +2,6 @@
 
 <body>
     <%- include("partials/navbar.ejs") %>
-    <div class="alert alert-success" role="alert" style="display: none;">
-        <strong>Community Created!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
-  
-    <div class="alert alert-info" role="alert" style="display: none;">
-        <strong>Community Edited!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
     <div class="wrapper center" data-community-id="<%= community.id %>">
         <div style="width: 50%;">
             <form>
@@ -63,9 +54,9 @@
                         <option value="announcement" <%= (community.type == "announcement") ? "selected" : "" %>>Announcement Community</option>
                     </select>
                     <select name="post_type" id="post_type" autocomplete="off">
+                        <option value="all" <%= (community.post_type == "all") ? "selected" : "" %>>All</option>
                         <option value="text"<%= (community.post_type == "text") ? "selected" : "" %>>Text Only</option>
                         <option value="memo" <%= (community.post_type == "memo") ? "selected" : "" %>>Memo Only</option>
-                        <option value="all" <%= (community.post_type == "all") ? "selected" : "" %>>All</option>
                     </select>
                   </div>
 
@@ -89,6 +80,8 @@
               </form>
 
               <div class="center">
+                <button type="button" class="btn btn-danger" style="margin-right: 20px;" communityid_delete="<%= community.id %>" onclick="confirmDeletionCommunity(this.getAttribute('communityid_delete'))">Delete</button>
+                <button type="button" class="btn btn-danger" style="margin-right: 20px; display: none !important;" communityid_confirm="<%= community.id %>" onclick="deleteCommunity(this.getAttribute('communityid_confirm'))">Confirm</button>
                 <button type="button" class="btn btn-secondary" style="margin-right: 20px;" onclick="history.back()">Cancel</button>
                 <button type="button" class="btn btn-success" onclick="submitEditedCommunity()">Commit Edits</button>
               </div>

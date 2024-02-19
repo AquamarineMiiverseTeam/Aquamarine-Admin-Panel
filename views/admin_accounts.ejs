@@ -2,24 +2,20 @@
 
 <body>
     <%- include("partials/navbar.ejs") %>
-
-    <div class="alert alert-success" role="alert" style="display: none;">
-        <strong>Community Created!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
-
-    <div class="alert alert-info" role="alert" style="display: none;">
-        <strong>Community Edited!</strong>
-        <span>StreetPass Plaza</span>
-    </div>
     
     <div class="wrapper">
         <div class="table-header">
-            <button type="button" class="btn btn-primary" onclick="pjax.loadUrl('/accounts/new')" style="margin: 5px;">Create New Account</button>
             <div id="filtering">
-                <button type="button" class="btn btn-info" onclick="sort_account_table(4, this.id)" value="" id="clear-search-query">Clear Search Querys</button>
-                <input placeholder="NNID.." id="sort-nnid" type="search" oninput="sort_account_table(3, this.id)">
-                <span id="found"></span>
+                <div>
+                    Showing <select oninput="show_entries(this.value)">
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="60">60</option>
+                        <option value="80">80</option>
+                    </select>Accounts
+                </div>
+                
+                <input placeholder="Network ID.." id="sort-nnid" type="search" oninput="search_accounts_by_network_id(this.value)">
             </div>
         </div>
         
@@ -33,7 +29,6 @@
                     <th>NNID</th>
                     <th id="hide">Mii Name</th>
                     <th>Mii</th>
-                    <th id="hide">Admin</th>
                     <th id="hide">Bio</th>
                     <th id="hide">Game Experience</th>
                     <th id="hide">Language</th>
@@ -41,20 +36,19 @@
                     <th id="hide">Favorite Post</th>
                     <th id="hide">Pronouns</th>
                     <th id="hide">Tester</th>
-                    <th>Edit</th>
-                    <th id="hide">Delete</th>
+                    <th id="hide">Admin</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <% for (let i=0; i < accounts.length; i++) { const account=accounts[i];%>
-                    <tr>
-                        <td><%= account.create_time %></td>
+                    <tr <%= (i >= 15) ? 'style=display:none' : "" %>>
+                        <td><%= moment(account.create_time).format("MM/DD/YYYY h:mm A") %></td>
                         <td><%= account.id %></td>
                         <td id="hide"><%= account.pid %></td>
                         <td><%= account.nnid %></td>
                         <td id="hide"><%= account.mii_name %></td>
                         <td><img width="48px" alt="<%= account.mii_hash %>" title="<%= account.mii_hash %>" src="https://mii-images.account.nintendo.net/<%= account.mii_hash %>_normal_face.png"></td>
-                        <td id="hide"><%= account.admin %></td>
                         <td id="hide"><%= account.bio %></td>
                         <td id="hide">
                             <% switch (account.game_experience) {
@@ -76,11 +70,12 @@
                         <td id="hide"><%= account.country %></td>
                         <td id="hide"><%= account.favorite_post %></td>              
                         <td id="hide"><%= account.pronouns %></td>
-                        <td id="hide"><%= (account.tester == 0) ? "false" : "true" %></td>
-                        <td><a type="button" class="btn btn-info" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</a></td>
-                        <td id="hide">
-                            <button accountid_delete=<%= account.id %> type="button" class="btn btn-danger" onclick="confirmDeletionAccount(this.attributes[0].value)">Delete</button>
-                            <button accountid_confirm=<%= account.id %> type="button" class="btn btn-danger" style="display: none;" onclick="deleteAccount(this.attributes[0].value)">Confirm</button>
+                        <td id="hide"><%= account.tester %></td>
+                        <td id="hide"><%= account.admin %></td>
+                        <td>
+                            <div class="options_container">
+                                <button type="button" class="btn btn-info" onclick="pjax.loadUrl('/accounts/<%= account.id %>')">Edit</button>
+                            </div>
                         </td>
                     </tr>
                 <%} %>
@@ -90,9 +85,4 @@
     </div>
     
 </body>
-
-<script>
-    loadPostTimes();
-</script>
-
 </html>

@@ -1,16 +1,14 @@
 const express = require('express');
 const path = require('path');
-const util = require('util')
 const colors = require('colors');
 
-const con = require('../Aquamarine-Utils/database_con');
+const db_con = require('../Aquamarine-Utils/database_con');
 const auth = require('./middleware/auth');
 
 const app = express();
 app.set('view engine', 'ejs');
 
 const config_http = require('./config/http.json');
-const config_database = require('../Aquamarine-Utils/database_config.json');
 const cookieparser = require("cookie-parser")
 
 //Grab logger middleware and use it. (Logs all incoming HTTP/HTTPS requests)
@@ -39,7 +37,9 @@ app.use((req, res, next) => {
     if (req.path.includes("js") || req.path.includes("css") || req.path.includes("img") || req.path.includes("lang")) { res.send({error : "The requested file could not be found", file : req.path}); return;}
 
     //If the page just couldn't be found altogether, return a 404 error page.
-    res.render("error/error_404");
+    res.render("error/error_404",{
+        account : req.account[0]
+    });
 
     return;
 });

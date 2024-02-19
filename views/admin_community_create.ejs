@@ -2,15 +2,6 @@
 
   <body>
     <%- include("partials/navbar.ejs") %>
-      <div class="alert alert-success" role="alert" style="display: none;">
-        <strong>Community Created!</strong>
-        <span>StreetPass Plaza</span>
-      </div>
-
-      <div class="alert alert-info" role="alert" style="display: none;">
-        <strong>Community Edited!</strong>
-        <span>StreetPass Plaza</span>
-      </div>
       <div class="wrapper center">
         <div style="width: 50%;">
           <form>
@@ -59,9 +50,9 @@
                   <option value="announcement">Announcement Community</option>
                 </select>
                 <select name="post_type" id="post_type" autocomplete="off">
+                  <option value="all">All</option>
                   <option value="text">Text Only</option>
                   <option value="memo">Memo Only</option>
-                  <option value="all">All</option>
                 </select>
               </div>
 

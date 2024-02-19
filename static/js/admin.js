@@ -1,16 +1,44 @@
 var pjax = new Pjax({
-    selectors: [".wrapper", ".alerts"]
+    selectors: [".wrapper", ".alerts"],
+    elements : "a"
 })
 
 document.addEventListener("pjax:send", () => {
-    document.querySelector(".alert-info").style.display = "none";
-    document.querySelector(".alert-success").style.display = "none";
+    showLoading(true);
 })
 
 document.addEventListener("pjax:complete", () => {
-    loadPostTimes();
-    console.log("pjax complete")
+    showLoading(false);
+    console.log("pjax complete");
+    offset = 0;
+
+    if (window.location.pathname.includes("/api_calls")) {
+        init_data()
+    }
 })
+
+document.addEventListener("DOMContentLoaded", (e) => {
+    console.log(document.querySelector(".nav"))
+    const nav_options = document.querySelectorAll("li a[data-selectable]");
+
+    for (const element of nav_options) {
+        element.addEventListener("click", (e) => {
+            for (const element of nav_options) {
+                element.parentElement.classList.remove("active")
+            }
+
+            element.parentElement.classList.add("active")
+        })
+    }
+})
+
+function showLoading(toggle) {
+    var loadingSymbol = document.querySelector(".loading");
+    if (toggle) {
+        loadingSymbol.style.display = "block";
+    } else
+        loadingSymbol.style.display = "none";
+}
 
 function log_in() {
     const password = document.querySelector('input[name="password"]').value
@@ -24,7 +52,7 @@ function log_in() {
 
 function confirmDeletionCommunity(id) {
     if (confirm("Are you sure about deleting this community?") == true) {
-        document.querySelector(`button[communityid_delete='${id}']`).style.display = "none"
+        document.querySelector(`button[communityid_delete='${id}']`).style.display = "none !important"
         document.querySelector(`button[communityid_confirm='${id}']`).style.display = "block"
     }
 }
@@ -37,14 +65,17 @@ function confirmDeletionAccount(id) {
 }
 
 async function moderatePost(id) {
+    showLoading(true);
     document.querySelector(`input[type=checkbox][postid="${id}"]`).disabled = true
 
     fetch(`/api/posts/${id}/moderate`, {
         method: "POST"
     }).then(res => {
         if (res.status === 200) {
+            showLoading(false);
             document.querySelector(`input[type=checkbox][postid="${id}"]`).disabled = false
         } else {
+            showLoading(false);
             alert(`Error with moderating post: ${id}!!!`)
         }
     })
@@ -121,6 +152,8 @@ async function submitEditedCommunity() {
 
     console.log(body)
 
+    showLoading(true);
+
     fetch(`/api/communities/${document.querySelector(".wrapper").getAttribute("data-community-id")}`, {
         method: "PUT",
         headers: {
@@ -129,15 +162,14 @@ async function submitEditedCommunity() {
         body: JSON.stringify(body)
     }).then(async res => {
         if (res.status === 200) {
+            showLoading(false);
             var resp = await res.json()
             console.log("pjax before")
             await pjax.loadUrl("/communities");
             console.log("pjax after")
             console.log(document.querySelector(".alert-info"))
-            document.querySelector(".alert-info strong").innerText = resp.header
-            document.querySelector(".alert-info span").innerText = resp.message
-            document.querySelector(".alert-info").style.display = "block"
         } else {
+            showLoading(false);
             console.log(`Status recieved ${res.status}`)
         }
     })
@@ -194,6 +226,7 @@ async function submitNewCommunity() {
     }
 
     console.log(body)
+    showLoading(true);
 
     fetch("/api/communities/new", {
         method: "POST",
@@ -203,18 +236,18 @@ async function submitNewCommunity() {
         body: JSON.stringify(body)
     }).then(async res => {
         if (res.status === 201) {
+            showLoading(false);
             var resp = await res.json()
             pjax.loadUrl("/communities")
-            document.querySelector(".alert-success strong").innerText = resp.header
-            document.querySelector(".alert-success span").innerText = resp.message
-            document.querySelector(".alert-success").style.display = "block"
         } else {
+            showLoading(false);
             console.log(`Status recieved ${res.status}`)
         }
     })
 }
 
 function deleteCommunity(id) {
+    showLoading(true);
     fetch(`/api/communities/${id}`, {
         method: "DELETE",
         headers: {
@@ -222,12 +255,11 @@ function deleteCommunity(id) {
         }
     }).then(async res => {
         if (res.status === 200) {
+            showLoading(false);
             var resp = await res.json()
             await pjax.loadUrl("/communities")
-            document.querySelector(".alert-success strong").innerText = resp.header
-            document.querySelector(".alert-success span").innerText = resp.message
-            document.querySelector(".alert-success").style.display = "block"
         } else {
+            showLoading(false);
             console.log(`Status recieved ${res.status}`)
         }
     })
@@ -279,7 +311,7 @@ async function submitNewAccount() {
     }
 
     console.log(body)
-
+    showLoading(true);
     fetch("/api/accounts/new", {
         method: "POST",
         headers: {
@@ -288,12 +320,11 @@ async function submitNewAccount() {
         body: JSON.stringify(body)
     }).then(async res => {
         if (res.status === 201) {
+            showLoading(false);
             var resp = await res.json()
             await pjax.loadUrl("/accounts")
-            document.querySelector(".alert-success strong").innerText = resp.header
-            document.querySelector(".alert-success span").innerText = resp.message
-            document.querySelector(".alert-success").style.display = "block"
         } else {
+            showLoading(false);
             console.log(`Status recieved ${res.status}`)
         }
     })
@@ -343,7 +374,7 @@ async function submitEditedAccount() {
         pronouns: pronouns,
         tester: tester
     }
-
+    showLoading(true);
     fetch(`/api/accounts/${document.querySelector(".wrapper").getAttribute("data-account-id")}`, {
         method: "PUT",
         headers: {
@@ -352,18 +383,18 @@ async function submitEditedAccount() {
         body: JSON.stringify(body)
     }).then(async res => {
         if (res.status === 200) {
+            showLoading(false);
             var resp = await res.json()
             await pjax.loadUrl("/accounts")
-            document.querySelector(".alert-success strong").innerText = resp.header
-            document.querySelector(".alert-success span").innerText = resp.message
-            document.querySelector(".alert-success").style.display = "block"
         } else {
+            showLoading(false);
             console.log(`Status recieved ${res.status}`)
         }
     })
 }
 
 function deleteAccount(id) {
+    showLoading(true);
     fetch(`/accounts/${id}`, {
         method: "DELETE",
         headers: {
@@ -371,85 +402,12 @@ function deleteAccount(id) {
         }
     }).then(async res => {
         if (res.status === 200) {
+            showLoading(false);
             var resp = await res.json()
             await pjax.loadUrl("/accounts")
-            document.querySelector(".alert-success strong").innerText = resp.header
-            document.querySelector(".alert-success span").innerText = resp.message
-            document.querySelector(".alert-success").style.display = "block"
         } else {
+            showLoading(false);
             console.log(`Status recieved ${res.status}`)
         }
     })
-}
-
-function loadPostTimes() {
-    var table = document.getElementById("admin_table");
-    for (var i = 1, row; row = table.rows[i]; i++) { // i is 1 to skip the table header
-        var date = new Date(row.cells[0].innerText)
-        row.cells[0].innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-    }
-}
-
-function sort_account_table(index, id) {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById(id);
-    filter = input.value.toUpperCase();
-    table = document.getElementById("admin_table");
-    tr = table.getElementsByTagName("tr");
-
-    var found = 0;
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[index];
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-                found += 1;
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-
-    document.getElementById("found").innerText = `Found ${found} Users`;
-
-    if (id == "clear-search-query") {
-        document.querySelectorAll("input").forEach((d) => {
-            d.value = "";
-        })
-    }
-}
-
-function sort_community_table(index, id) {
-    var input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById(id);
-    filter = input.value.toUpperCase();
-    table = document.getElementById("community_table");
-    tr = table.getElementsByTagName("tr");
-
-    var found = 0;
-
-    // Loop through all table rows, and hide those who don't match the search query
-    for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[index];
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-                found += 1;
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-
-    if (id == "clear-search-query") {
-        document.querySelectorAll("input").forEach((d) => {
-            d.value = "";
-        });
-    }
-
-    document.getElementById("found").innerText = `Found ${found} Communities`
 }

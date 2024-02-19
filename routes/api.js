@@ -3,20 +3,10 @@ const route = express.Router()
 
 const body_parser = require('body-parser')
 
-const database_query = require('../../Aquamarine-Utils/database_query')
-
-const con = require('../../Aquamarine-Utils/database_con')
-
-const util = require('util')
-
-const query = util.promisify(con.query).bind(con)
+const db_con = require('../../Aquamarine-Utils/database_con')
+const knex = require("knex")
 
 const fs = require('fs')
-const path = require('path')
-
-const moment = require('moment');
-
-const common = require('../../Aquamarine-Utils/common')
 
 route.use(body_parser.urlencoded({extended : false, limit : '150mb'}))
 route.use(body_parser.json({limit : '150mb'}))
@@ -33,22 +23,31 @@ route.use(async (req, res, next) => {
 
 // post moderation endpoint
 route.post('/posts/:post_id/moderate', async (req, res) => {
-    await query(`UPDATE posts SET moderated=(moderated ^ 1) WHERE id=?`, req.params.post_id);
-    await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "moderated_post", req.params.post_id]);
+    await db_con.raw("UPDATE posts SET moderated=(moderated^1) WHERE id=? ", req.params.post_id)
+
+    await db_con("admin_actions").insert({
+        admin : req.account[0].nnid,
+        action_type : "moderated_post",
+        action_description : req.params.post_id
+    })
 
     res.sendStatus(200);
 })
 
 route.delete("/communities/:id", async (req, res) => {
-    var original_community = await query("SELECT * FROM communities WHERE id=?", req.params.id);
-    await query("DELETE FROM communities WHERE id=?", req.params.id);
-    await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "deleted_community", `${original_community.name} (ID: ${req.params.id})`]);
+    await db_con("communities").del().where({id : req.params.id})
+
+    await db_con("admin_actions").insert({
+        admin : req.account[0].nnid,
+        action_type : "deleted_community",
+        action_description : req.params.id
+    })
 
     res.status(200).send({success : 1, header : "Deleted Community Successfully!", message : " "});
 })
 
 route.put('/communities/:id', async (req, res) => {
-    var original_community = (await query("SELECT * FROM communities WHERE id=?", req.params.id))[0];
+    var original_community = (await db_con("communities").where({id : req.params.id}))[0]
     var editString = original_community.name == req.body.name ? original_community.name : `${original_community.name} -> ${req.body.name}`;
     editString += ` (ID: ${original_community.id})\n\n`;
 
@@ -82,18 +81,43 @@ route.put('/communities/:id', async (req, res) => {
     }
 
     if (editString != ogEditString) {
-        await query(`UPDATE communities SET name=?, description=?, app_data=?, pid=?, title_ids=?, platform=?, post_type=?, type=?, parent_community_id=?, ingame_only=?, special_community=? WHERE id=?`, 
-        [req.body.name, req.body.desc, req.body.app_data, req.body.pid, req.body.title_ids, req.body.platform, req.body.post_type, req.body.type, req.body.parent_community_id, req.body.ingame_only, req.body.special_community, req.params.id]);
-    
-        await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "altered_community", editString.trim()]);
+        await db_con("communities").where({id : req.params.id}).update({
+            name : req.body.name,
+            description : req.body.desc,
+            app_data : req.body.app_data,
+            pid : req.body.pid,
+            title_ids : req.body.title_ids,
+            platform : req.body.platform,
+            post_type : req.body.post_type,
+            type : req.body.type,
+            parent_community_id : req.body.parent_community_id,
+            ingame_only : req.body.ingame_only,
+            special_community : req.body.special_community
+        })
+
+        await db_con("admin_actions").insert({
+            admin : req.account[0].nnid,
+            action_type : "altered_community",
+            action_description : editString.trim()
+        })
     }
 
     res.status(200).send({success : 1, header : "Edited Community Successful!", message : original_community.name});
 })
 
 route.post('/communities/new', async (req, res) => {
-    var id = await query(`INSERT INTO communities (name, description, app_data, pid, title_ids, platform, post_type, type, parent_community_id, ingame_only) VALUES(?,?,?,?,?,?,?,?,?,?)`,
-    [req.body.name, req.body.desc, req.body.app_data, (req.body.pid) ? req.body.pid : 0, req.body.title_ids, req.body.platform, req.body.post_type, req.body.type, (req.body.parent_community_id) ? req.body.parent_community_id : 0, (req.body.ingame_only) ? req.body.ingame_only : 0]);
+    const id = (await db_con("communities").insert({
+        name : req.body.name,
+        description : req.body.desc,
+        app_data : req.body.app_data,
+        pid : req.body.pid,
+        title_ids : req.body.title_ids,
+        platform : req.body.platform,
+        post_type : req.body.post_type,
+        type : req.body.type,
+        parent_community_id : req.body.parent_community_id,
+        ingame_only : req.body.ingame_only
+    }))[0]
 
     var editString = `${req.body.name} (ID: ${id.insertId})\n\n`;
 
@@ -107,28 +131,32 @@ route.post('/communities/new', async (req, res) => {
     editString += `Community Type: ${req.body.type}\n`;
     editString += `Post Type: ${req.body.post_type}\n`;
 
-    await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "created_community", editString]);
+    await db_con("admin_actions").insert({
+        admin : req.account[0].nnid,
+        action_type : "created_community",
+        action_description : editString
+    })
 
     if (req.body.icon) {
-        fs.writeFileSync(__dirname + `/../../CDN_Files/img/icons/${id.insertId}.jpg`, req.body.icon, 'base64');
+        fs.writeFileSync(__dirname + `/../../CDN_Files/img/icons/${id}.jpg`, req.body.icon, 'base64');
     }
     else {
-        fs.copyFileSync( __dirname + `/../../CDN_Files/img/icons/default.jpg`, __dirname + `/../../CDN_Files/img/icons/${id.insertId}.jpg`);
+        fs.copyFileSync( __dirname + `/../../CDN_Files/img/icons/default.jpg`, __dirname + `/../../CDN_Files/img/icons/${id}.jpg`);
     }
 
     if (req.body.banner_wup) {
-        fs.writeFileSync(__dirname + `/../../CDN_Files/img/banners-wup/${id.insertId}.jpg`, req.body.banner_wup, 'base64');
+        fs.writeFileSync(__dirname + `/../../CDN_Files/img/banners-wup/${id}.jpg`, req.body.banner_wup, 'base64');
     }
 
     if (req.body.banner_ctr) {
-        fs.writeFileSync(__dirname + `/../../CDN_Files/img/banners-ctr/${id.insertId}.jpg`, req.body.banner_ctr, 'base64');
+        fs.writeFileSync(__dirname + `/../../CDN_Files/img/banners-ctr/${id}.jpg`, req.body.banner_ctr, 'base64');
     }
 
     res.status(201).send({success : 1, header : "Created New Community!", message : req.body.name});
 })
 
 route.put('/accounts/:id', async (req, res) => {
-    var original_account = (await query("SELECT * FROM accounts WHERE id=?", req.params.id))[0];
+    var original_account = (await db_con("accounts").where({id : req.params.id}))[0]
     var editString = original_account.nnid == req.body.nnid ? original_account.nnid : `${original_account.nnid} -> ${req.body.nnid}`;
     editString += ` (ID: ${original_account.id})\n\n`;
 
@@ -156,30 +184,32 @@ route.put('/accounts/:id', async (req, res) => {
     if (original_account.tester != req.body.tester) editString += `Tester: ${original_account.tester} -> ${req.body.tester}\n`;
 
     if (editString != ogEditString) {
-        await query(`UPDATE accounts SET pid=?, nnid=?, mii=?, mii_name=?, mii_hash=?, bio=?, admin=?, banned=?, 3ds_service_token=?, wiiu_service_token=?, game_experience=?, language=?, country=?, favorite_post=?, relationship_visible=?, allow_friend=?, empathy_notification=?, pronouns=?, community_settings=?, tester=? WHERE id=?`,
-        [req.body.pid,
-        req.body.nnid,
-        req.body.mii,
-        req.body.mii_name,
-        req.body.mii_hash,
-        req.body.bio,
-        req.body.admin,
-        req.body.banned,
-        req.body.threeds_service_token,
-        req.body.wiiu_service_token,
-        req.body.game_experience,
-        req.body.language,
-        req.body.country,
-        req.body.favorite_post,
-        req.body.relationship_visible,
-        req.body.allow_friend,
-        req.body.empathy_notification,
-        req.body.pronouns,
-        req.body.community_settings,
-        req.body.tester,
-        req.params.id]);    
+        await db_con("accounts").where({id : req.params.id}).update({
+            pid : req.body.pid,
+            nnid : req.body.nnid,
+            mii : req.body.mii,
+            mii_name : req.body.mii_name,
+            mii_hash : req.body.mii_hash,
+            bio : req.body.bio,
+            admin : req.body.admin,
+            banned : req.body.banned,
+            "3ds_service_token" : req.body.threeds_service_token,
+            wiiu_service_token : req.body.wiiu_service_token,
+            language : req.body.language,
+            country : req.body.country,
+            favorite_post : req.body.favorite_post,
+            allow_friend : req.body.allow_friend,
+            empathy_notification : req.body.empathy_notification,
+            pronouns : req.body.pronouns,
+            community_settings : req.body.community_settings,
+            tester : req.body.tester
+        })
 
-        await query("INSERT INTO admin_actions (admin, action_type, action_description) VALUES(?,?,?)", [req.account[0].nnid, "altered_account", editString.trim()]);
+        await db_con("admin_actions").insert({
+            admin : req.account[0].nnid,
+            action_type : "altered_account",
+            action_description : editString.trim()
+        })
     }
     
     res.status(200).send({success : 1, header : "Updated Account Successfully!", message : original_account.nnid});

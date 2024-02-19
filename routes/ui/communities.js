@@ -1,42 +1,45 @@
 const express = require('express')
 const route = express.Router()
 
-const body_parser = require('body-parser')
-
-const database_query = require('../../../Aquamarine-Utils/database_query')
-
-const con = require('../../../Aquamarine-Utils/database_con')
-
-const util = require('util')
-
-const query = util.promisify(con.query).bind(con)
-
-const fs = require('fs')
-const path = require('path')
+const db_con = require('../../../Aquamarine-Utils/database_con')
 
 const moment = require('moment');
 
-const common = require('../../../Aquamarine-Utils/common')
-
 route.get("/", async (req, res) => {
-    var communities = await database_query.getCommunities('desc', null, 'all')
-    var account = req.account[0]
+    if (req.get("x-inline-pjax")) {
+        if (req.query['search']) {
+            const communities = await db_con("communities").whereILike("name", `%${req.query['search']}%`);
+
+            res.send(communities);
+
+            return;
+        }
+
+        const communities = await db_con("communities").orderBy("create_time", "desc").offset(req.query['offset']).limit(req.query['limit'])
+
+        res.send(communities);
+
+        return;
+    }
+
+    const num_communities = (await db_con("communities").count("id"))[0]['count(`id`)']
+    const communities = await db_con("communities").orderBy("create_time", "desc")
 
     res.render('admin_communities.ejs', {
         communities : communities,
-        account : account,
-        con : con
+        num_communities : num_communities,
+        account : req.account[0]
     })
 })
 
 route.get("/new", async (req, res) => {
-    res.render('admin_community_create', {
+    res.render('admin_community_create',{
         account : req.account[0]
     })
 })
 
 route.get("/:id", async (req, res) => {
-    var community = (await database_query.getCommunity(req.params.id, req))
+    const community = (await db_con("communities").where({id : req.params.id}))[0]
     
     res.render('admin_community_edit', {
         community : community,
@@ -45,11 +48,11 @@ route.get("/:id", async (req, res) => {
 })
 
 route.get("/:id/posts", async (req, res) => {
-    const posts = await query("SELECT * FROM posts WHERE community_id=? ORDER BY id DESC", req.params.id)
-    const community = await database_query.getCommunity(req.params.id, req);
+    const posts = await db_con("posts").where({community_id : req.params.id}).orderBy("create_time", "desc")
+    const community = await db_con("communities").where({id : req.params.id})
 
     for (let i = 0; i < posts.length; i++) {
-        const account = (await query("SELECT * FROM accounts WHERE id=?", posts[i].account_id))[0];
+        const account = (await db_con("accounts").where({id : posts[i].account_id}))[0]
 
         var mii_face;
 
@@ -79,9 +82,6 @@ route.get("/:id/posts", async (req, res) => {
 
         posts[i].mii_image = `http://mii-images.account.nintendo.net/${account.mii_hash}_${mii_face}.png`;
         posts[i].mii_name = account.mii_name;
-
-        posts[i].is_empathied_by_user = (await query("SELECT * FROM empathies WHERE post_id=? AND account_id=?", [posts[i].id, req.account[0].id])).length;
-        posts[i].empathy_count = (await query("SELECT * FROM empathies WHERE post_id=?", posts[i].id)).length;
         posts[i].admin = account.admin;
     }
 
