@@ -4,6 +4,7 @@ const route = express.Router()
 const db_con = require('../../../Aquamarine-Utils/database_con')
 
 const moment = require('moment');
+const permission = require("../../middleware/permissions")
 
 route.get("/api_calls", async (req, res) => {
     const api_calls = (await db_con.raw("SELECT DATE(create_time) AS forDate, COUNT(*) AS numAPICalls FROM api_calls GROUP BY DATE(create_time) ORDER BY forDate"))[0]

@@ -186,6 +186,8 @@ route.put('/accounts/:id', async (req, res) => {
     if (original_account.pronouns != req.body.pronouns) editString += `Pronouns: ${original_account.pronouns} -> ${req.body.pronouns}\n`;
     if (original_account.community_settings != req.body.community_settings) editString += `Community Settings: ${original_account.community_settings} -> ${req.body.community_settings}\n`;
     if (original_account.tester != req.body.tester) editString += `Tester: ${original_account.tester} -> ${req.body.tester}\n`;
+    if (original_account.allow_admin_panel != req.body.allow_admin_panel) editString += `AAP: ${original_account.allow_admin_panel} -> ${req.body.allow_admin_panel}\n`;
+    if (original_account.permission_level != req.body.permission_level) editString += `AAP: ${original_account.permission_level} -> ${req.body.permission_level}\n`;
 
     if (editString != ogEditString) {
         await db_con("accounts").where({id : req.params.id}).update({
@@ -206,7 +208,9 @@ route.put('/accounts/:id', async (req, res) => {
             empathy_notification : req.body.empathy_notification,
             pronouns : req.body.pronouns,
             community_settings : req.body.community_settings,
-            tester : req.body.tester
+            tester : req.body.tester,
+            allow_admin_panel : req.body.allow_admin_panel,
+            permission_level : req.body.permission_level
         })
 
         await db_con("admin_actions").insert({

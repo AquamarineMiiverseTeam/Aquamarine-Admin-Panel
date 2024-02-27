@@ -4,6 +4,9 @@ const route = express.Router()
 const db_con = require('../../../Aquamarine-Utils/database_con')
 
 const moment = require('moment');
+const permission = require("../../middleware/permissions")
+
+route.use(permission("all"))
 
 route.get("/", async (req, res) => {
     const accounts = await db_con("accounts").orderBy("create_time", "desc")

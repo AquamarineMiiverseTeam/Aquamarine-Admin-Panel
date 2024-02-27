@@ -290,6 +290,7 @@ async function submitNewAccount() {
     const community_settings = document.getElementById('community_settings').value
     const pronouns = document.getElementById('pronouns').value
     const tester = document.getElementById('tester').value
+    const allow_admin_panel = document.getElementById('allow_admin_panel').value
 
     const body = {
         pid: pid,
@@ -311,7 +312,8 @@ async function submitNewAccount() {
         empathy_notification: empathy_notification,
         community_settings: community_settings,
         pronouns: pronouns,
-        tester: tester
+        tester: tester,
+        allow_admin_panel: allow_admin_panel
     }
 
     console.log(body)
@@ -355,6 +357,8 @@ async function submitEditedAccount() {
     const community_settings = document.getElementById('community_settings').value
     const pronouns = document.getElementById('pronouns').value
     const tester = document.getElementById('tester').value
+    const allow_admin_panel = document.getElementById('allow_admin_panel').value
+    const permission_level = document.getElementById('permission_level').value
 
     const body = {
         pid: pid,
@@ -376,7 +380,9 @@ async function submitEditedAccount() {
         empathy_notification: empathy_notification,
         community_settings: community_settings,
         pronouns: pronouns,
-        tester: tester
+        tester: tester,
+        allow_admin_panel: allow_admin_panel,
+        permission_level: permission_level
     }
     showLoading(true);
     fetch(`/api/accounts/${document.querySelector(".wrapper").getAttribute("data-account-id")}`, {

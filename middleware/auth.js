@@ -12,7 +12,7 @@ async function auth(req, res, next) {
 
     var passwordHash = crypto.createHash('sha256').update(req.cookies.password + account[0].password_salt).digest('hex');
     if (passwordHash == account[0].password_hash) {
-        if (account[0].admin != 1) {res.sendStatus(400); console.log(logger.error(`${account[0].nnid} is trying to access the admin panel!!!!!!`)); return;}
+        if (account[0].allow_admin_panel != 1) {res.sendStatus(400); console.log(logger.error(`${account[0].nnid} is trying to access the admin panel!!!!!!`)); return;}
         req.account = account;
         next()
     } else {

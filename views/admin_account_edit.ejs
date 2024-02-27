@@ -35,6 +35,14 @@
                         <input id="admin" type="text" class="form-control" placeholder="Admin (0, 1)" value="<%= editAccount.admin %>">
                     </div>
                     <div class="col">
+                        <label>Allow Admin Panel</label>
+                        <input id="allow_admin_panel" type="text" class="form-control" placeholder="(0, 1)" value="<%= editAccount.allow_admin_panel %>">
+                    </div>
+                    <div class="col">
+                        <label>Permission Level ("all", "community")</label>
+                        <input id="permission_level" type="text" class="form-control" placeholder="(0, 1)" value="<%= editAccount.permission_level %>">
+                    </div>
+                    <div class="col">
                         <label>Tester</label>
                         <input id="tester" type="text" class="form-control" placeholder="Tester (0, 1)" value="<%= editAccount.tester %>">
                     </div>
