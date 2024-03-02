@@ -38,7 +38,7 @@
                         <td><%= favorite.id %></td>
                         <td><%= favorite.account_id %></td>
                         <td><%= favorite.community_id %></td>
-                        <td><%= favorite.community_name %></td>
+                        <td><a href="/communities/<%= favorite.community_id %>/posts"><%= favorite.community_name %></a></td>
                     </tr>
                 <% } %>
             </tbody>

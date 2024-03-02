@@ -49,42 +49,13 @@ route.get("/:id", async (req, res) => {
 })
 
 route.get("/:id/posts", async (req, res) => {
-    const posts = await db_con("posts").where({community_id : req.params.id}).orderBy("create_time", "desc")
-    const community = await db_con("communities").where({id : req.params.id})
+    const posts = await db_con("posts")
+    .select("posts.*", "accounts.id as account_id", "accounts.mii_hash", "accounts.nnid", "accounts.mii_name", "accounts.admin")
+    .where({community_id : req.params.id})
+    .innerJoin("accounts", "accounts.id", "=", "posts.account_id")
+    .orderBy("create_time", "desc")
 
-    for (let i = 0; i < posts.length; i++) {
-        const account = (await db_con("accounts").where({id : posts[i].account_id}))[0]
-
-        var mii_face;
-
-        switch (posts[i].feeling_id) {
-            case 0:
-                mii_face = "normal_face";
-                break;
-            case 1:
-                mii_face = "happy_face";
-                break;
-            case 2:
-                mii_face = "like_face";
-                break;
-            case 3:
-                mii_face = "surprised_face";
-                break;
-            case 4:
-                mii_face = "frustrated_face";
-                break;
-            case 5:
-                mii_face = "puzzled_face";
-                break;
-            default:
-                mii_face = "normal_face";
-                break;
-        }
-
-        posts[i].mii_image = `http://mii-images.account.nintendo.net/${account.mii_hash}_${mii_face}.png`;
-        posts[i].mii_name = account.mii_name;
-        posts[i].admin = account.admin;
-    }
+    const community = (await db_con("communities").where({id : req.params.id}))[0]
 
     res.render('admin_community_posts', {
         posts : posts,
