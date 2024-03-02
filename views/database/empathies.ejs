@@ -5,19 +5,25 @@
 
     <div class="wrapper">
         <div class="table-header" style="padding-left: 15px;">
-            Showing <select oninput="show_entries(this.value)">
-                <option value="15">15</option>
-                <option value="30">30</option>
-                <option value="60">60</option>
-                <option value="80">80</option>
-                <option value="<%= empathies.length %>">All</option>
-            </select>Empathies
+            <div id="filtering">
+                <div>
+                    Showing <select oninput="show_entries(this.value)">
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="60">60</option>
+                        <option value="80">80</option>
+                        <option value="<%= empathies.length %>">All (<%= empathies.length %>)</option>
+                    </select>Empathies
+                </div>
+            </div>  
         </div>
         <table id="community_table" class="table table-striped table-bordered" style="padding: 20px;">
             <thead class="thead-dark">
                 <tr>
-                    <th>ID</th>
                     <th>Create Time</th>
+                    <th>Mii</th>
+                    <th>NNID</th>
+                    <th>ID</th>
                     <th>Account ID</th>
                     <th>Post ID</th>
                 </tr>
@@ -25,8 +31,10 @@
             <tbody>
                 <% for (let i=0; i < empathies.length; i++) { const empathy = empathies[i] %>
                     <tr <%= (i >= 15) ? 'style=display:none' : "" %>>
-                        <td><%= empathy.id %></td>
                         <td><%= moment(empathy.create_time).format("MM/DD/YYYY h:mm A") %></td>
+                        <td><img width="50px" src="http://mii-images.account.nintendo.net/<%= empathy.mii_hash %>_normal_face.png"></td>
+                        <td><%= empathy.nnid %></td>
+                        <td><%= empathy.id %></td>
                         <td><%= empathy.account_id %></td>
                         <td><%= empathy.post_id %></td>
                     </tr>

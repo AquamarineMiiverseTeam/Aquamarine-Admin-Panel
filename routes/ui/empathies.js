@@ -9,7 +9,10 @@ const permission = require("../../middleware/permissions")
 route.use(permission("all"))
 
 route.get("/", async (req, res) => {
-    const empathies = await db_con("empathies").orderBy("create_time", "desc")
+    const empathies = await db_con("empathies")
+    .select("empathies.*", "accounts.mii_hash", "accounts.nnid")
+    .innerJoin("accounts", "accounts.id", "=", "empathies.account_id")
+    .orderBy("create_time", "desc")
     
     res.render("database/empathies.ejs", {
         account : req.account[0],

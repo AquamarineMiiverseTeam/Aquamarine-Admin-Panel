@@ -9,7 +9,11 @@ const permission = require("../../middleware/permissions")
 route.use(permission("all"))
 
 route.get("/", async (req, res) => {
-    const favorites = await db_con("favorites").orderBy("create_time", "desc")
+    const favorites = await db_con("favorites")
+    .select("favorites.*", "accounts.mii_hash", "accounts.nnid", "communities.name as community_name")
+    .innerJoin("accounts", "accounts.id", "=", "favorites.account_id")
+    .innerJoin("communities", "communities.id", "=", "favorites.community_id")
+    .orderBy("create_time", "desc")
     
     res.render("database/favorites.ejs", {
         account : req.account[0],
