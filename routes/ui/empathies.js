@@ -12,7 +12,7 @@ route.get("/", async (req, res) => {
     const empathies = await db_con("empathies")
     .select("empathies.*", "accounts.mii_hash", "accounts.nnid")
     .innerJoin("accounts", "accounts.id", "=", "empathies.account_id")
-    .orderBy("create_time", "desc")
+    .orderBy("empathies.create_time", "desc")
     
     res.render("database/empathies.ejs", {
         account : req.account[0],
