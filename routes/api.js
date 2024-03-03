@@ -5,6 +5,8 @@ const body_parser = require('body-parser')
 
 const db_con = require('../../Aquamarine-Utils/database_con')
 const knex = require("knex")
+const git = require("../config/git.json")
+const permission = require("../middleware/permissions")
 
 const fs = require('fs')
 
@@ -20,9 +22,8 @@ route.use(async (req, res, next) => {
     next();
 })
 
-
 // post moderation endpoint
-route.post('/posts/:post_id/moderate', async (req, res) => {
+route.post('/posts/:post_id/moderate', permission("all"), async (req, res) => {
     await db_con.raw("UPDATE posts SET moderated=(moderated^1) WHERE id=? ", req.params.post_id)
 
     await db_con("admin_actions").insert({
@@ -34,7 +35,7 @@ route.post('/posts/:post_id/moderate', async (req, res) => {
     res.sendStatus(200);
 })
 
-route.delete("/communities/:id", async (req, res) => {
+route.delete("/communities/:id", permission("community"), async (req, res) => {
     await db_con("communities").del().where({id : req.params.id})
 
     await db_con("admin_actions").insert({
@@ -46,7 +47,7 @@ route.delete("/communities/:id", async (req, res) => {
     res.status(200).send({success : 1, header : "Deleted Community Successfully!", message : " "});
 })
 
-route.put('/communities/:id', async (req, res) => {
+route.put('/communities/:id', permission("community"), async (req, res) => {
     var original_community = (await db_con("communities").where({id : req.params.id}))[0]
     var editString = original_community.name == req.body.name ? original_community.name : `${original_community.name} -> ${req.body.name}`;
     editString += ` (ID: ${original_community.id})\n\n`;
@@ -107,7 +108,7 @@ route.put('/communities/:id', async (req, res) => {
     res.status(200).send({success : 1, header : "Edited Community Successful!", message : original_community.name});
 })
 
-route.post('/communities/new', async (req, res) => {
+route.post('/communities/new', permission("community"), async (req, res) => {
     const id = (await db_con("communities").insert({
         name : req.body.name,
         description : req.body.desc,
@@ -159,7 +160,7 @@ route.post('/communities/new', async (req, res) => {
     res.status(201).send({success : 1, header : "Created New Community!", message : req.body.name});
 })
 
-route.put('/accounts/:id', async (req, res) => {
+route.put('/accounts/:id', permission("all"), async (req, res) => {
     var original_account = (await db_con("accounts").where({id : req.params.id}))[0]
     var editString = original_account.nnid == req.body.nnid ? original_account.nnid : `${original_account.nnid} -> ${req.body.nnid}`;
     editString += ` (ID: ${original_account.id})\n\n`;
@@ -223,7 +224,7 @@ route.put('/accounts/:id', async (req, res) => {
     res.status(200).send({success : 1, header : "Updated Account Successfully!", message : original_account.nnid});
 })
 
-route.delete("/accounts/:id", async (req, res) => {
+route.delete("/accounts/:id", permission("all"), async (req, res) => {
     var original_account = await query("SELECT * FROM accounts WHERE id=?", req.params.id);
     await query("DELETE FROM posts WHERE account_id=?", req.params.id);
     await query("DELETE FROM favorites WHERE account_id=?", req.params.id);
@@ -234,7 +235,7 @@ route.delete("/accounts/:id", async (req, res) => {
     res.status(200).send({success : 1, header : "Deleted Account Successfully!", message : "Deleted"});
 })
 
-route.post('/accounts/new', async (req, res) => {
+route.post('/accounts/new', permission("all"), async (req, res) => {
 
     req.body.pid = req.body.pid ? req.body.pid : 0;
     req.body.nnid = req.body.nnid ? req.body.nnid : "DUMMY";

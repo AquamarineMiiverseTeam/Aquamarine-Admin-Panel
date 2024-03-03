@@ -1,0 +1,40 @@
+<%- include("../partials/header.ejs") %>
+
+<body>
+    <%- include("../partials/navbar.ejs") %>
+
+    <div class="wrapper">
+        <div class="table-header" style="padding-left: 15px;">
+            <div id="filtering">
+                
+            </div>            
+        </div>
+        <table id="community_table" class="table table-striped table-bordered" style="padding: 20px;">
+            <thead class="thead-dark">
+                <tr>
+                    <th>PID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Username</th>
+                    <th>Node Version</th>
+                    <th>Watch</th>
+                    <th>Auto Restart</th>
+                    <th>Kill Retry Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (const instance of pm2_list) { %>
+                    <tr>
+                        <td><%= instance.pid %></td>
+                        <td><%= instance.name %></td>
+                        <td><%= instance.pm2_env.status %></td>
+                        <td><%= instance.pm2_env.username %></td>
+                        <td><%= instance.pm2_env.node_version %></td>
+                        <td><%= instance.pm2_env.watch %></td>
+                        <td><%= instance.pm2_env.autorestart %></td>
+                        <td><%= instance.pm2_env.kill_retry_time %></td>
+                    </tr>
+                <%} %>
+            </tbody>
+    </div>
+</body>

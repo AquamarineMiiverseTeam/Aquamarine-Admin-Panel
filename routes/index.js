@@ -37,5 +37,10 @@ module.exports = [
     {
         path : "/",
         route : require("./ui/root")
+    },
+
+    {
+        path : "/pm2/",
+        route : require("./ui/pm2")
     }
 ]
