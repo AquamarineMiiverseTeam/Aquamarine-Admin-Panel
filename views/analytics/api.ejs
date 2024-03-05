@@ -6,7 +6,7 @@
     <div class="wrapper">
         <div class="analytics-wrapper">
             <h1>Total Number of API Requests: <%= api_calls_num.toLocaleString() %></h1>
-            <canvas id="api_usage_chart" data-table-data="<%= JSON.stringify(api_calls) %>"></canvas>
+            <canvas id="api_usage_chart" data-table-data="<%= JSON.stringify(api_calls) %>" data-table-notifications-data="<%= JSON.stringify(api_calls_notifications) %>"></canvas>
         </div>
     </div>
 </body>
